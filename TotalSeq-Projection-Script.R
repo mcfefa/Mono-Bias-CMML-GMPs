@@ -40,6 +40,7 @@ remotes::install_github("stuart-lab/signac", "seurat5", lib=libraryPath, quiet =
 savedir <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/CMML-"
 enddir <-"_Unprocessed-RDS_2023-12-13.rds"
 
+##### PATIENT 1
 P1file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/P1_RX_1_001_CMML_MPN_NRAS/outs/filtered_feature_bc_matrix/"
 
 P1.counts <- Read10X(data.dir=P1file)
@@ -48,7 +49,6 @@ P1.adt <- P1.counts$`Antibody Capture`
 
 all.equal(colnames(P1.rna), colnames(P1.adt))
 
-##<------------------------------
 # creates a Seurat object based on the scRNA-seq data
 P1 <- CreateSeuratObject(counts=P1.rna, project="RX1001")
 
@@ -64,8 +64,145 @@ Assays(P1)
 # Extract a list of features measured in the ADT assay
 rownames(P1[["ADT"]])
 
-
-##class(P1[["RNA"]])
 P1 <- RenameCells(object=P1, add.cell.id="RX1001")
 saveRDS(P1, paste(savedir,"P1_RX-1-001_CMML-MPN-NRAS",enddir,sep=""))
+
+
+####### PATIENT 2
+P2file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/P2_RX_4_001_CMML_MPN_KRAS/outs/filtered_feature_bc_matrix/"
+PtName <- "RX4001"
+
+P2.counts <- Read10X(data.dir=P2file)
+P2.rna <- P2.counts$`Gene Expression`
+P2.adt <- P2.counts$`Antibody Capture`
+
+P2 <- CreateSeuratObject(counts=P2.rna, project=PtName)
+P2_adt_assay <- CreateAssay5Object(counts = P2.adt)
+P2[["ADT"]] <- P2_adt_assay
+P2 <- RenameCells(object=P2, add.cell.id=PtName)
+saveRDS(P2, paste(savedir,"P2_RX-4-001_CMML-MPN-KRAS",enddir,sep=""))
+
+####### PATIENT 3
+P3file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/P3_RX_8_001_CMML_MPN_KRAS/outs/filtered_feature_bc_matrix/"
+Pt3Name <- "RX8001"
+
+P3.counts <- Read10X(data.dir=P3file)
+P3.rna <- P3.counts$`Gene Expression`
+P3.adt <- P3.counts$`Antibody Capture`
+
+P3 <- CreateSeuratObject(counts=P3.rna, project=Pt3Name)
+P3_adt_assay <- CreateAssay5Object(counts = P3.adt)
+P3[["ADT"]] <- P3_adt_assay
+P3 <- RenameCells(object=P3, add.cell.id=Pt3Name)
+saveRDS(P3, paste(savedir,"P3_RX-8-001_CMML-MPN-KRAS",enddir,sep=""))
+
+####### PATIENT 4
+P4file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/P4_KB_13_103_010_MPN_NRAS/outs/filtered_feature_bc_matrix/"
+Pt4Name <- "KB13103010"
+
+P4.counts <- Read10X(data.dir=P4file)
+P4.rna <- P4.counts$`Gene Expression`
+P4.adt <- P4.counts$`Antibody Capture`
+
+P4 <- CreateSeuratObject(counts=P4.rna, project=Pt4Name)
+P4_adt_assay <- CreateAssay5Object(counts = P4.adt)
+P4[["ADT"]] <- P4_adt_assay
+P4 <- RenameCells(object=P4, add.cell.id=Pt4Name)
+saveRDS(P4, paste(savedir,"P4_KB-13-103-010_CMML-MPN-NRAS",enddir,sep=""))
+
+
+####### PATIENT 5
+P5file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/P5_KB_14_103_011_MPN_NRAS/outs/filtered_feature_bc_matrix/"
+Pt5Name <- "KB14103011"
+
+P5.counts <- Read10X(data.dir=P5file)
+P5.rna <- P5.counts$`Gene Expression`
+P5.adt <- P5.counts$`Antibody Capture`
+
+P5 <- CreateSeuratObject(counts=P5.rna, project=Pt5Name)
+P5_adt_assay <- CreateAssay5Object(counts = P5.adt)
+P5[["ADT"]] <- P5_adt_assay
+P5 <- RenameCells(object=P5, add.cell.id=Pt5Name)
+saveRDS(P5, paste(savedir,"P5_KB-14-103-011_CMML-MPN-NRAS",enddir,sep=""))
+
+
+####### PATIENT 6
+P6file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-02/P6_1_X_001_CMML_MPN_KRAS/outs/filtered_feature_bc_matrix/"
+Pt6Name <- "1X001"
+
+P6.counts <- Read10X(data.dir=P6file)
+P6.rna <- P6.counts$`Gene Expression`
+P6.adt <- P6.counts$`Antibody Capture`
+
+P6 <- CreateSeuratObject(counts=P6.rna, project=Pt6Name)
+P6_adt_assay <- CreateAssay5Object(counts = P6.adt)
+P6[["ADT"]] <- P6_adt_assay
+P6 <- RenameCells(object=P6, add.cell.id=Pt6Name)
+saveRDS(P6, paste(savedir,"P6_1-X-001_CMML-MPN-KRAS",enddir,sep=""))
+
+
+####### PATIENT 7
+P7file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-02/P7_2_U_001_CMML_MPN_NRAS/outs/filtered_feature_bc_matrix/"
+Pt7Name <- "2U001"
+
+P7.counts <- Read10X(data.dir=P7file)
+P7.rna <- P7.counts$`Gene Expression`
+P7.adt <- P7.counts$`Antibody Capture`
+
+P7 <- CreateSeuratObject(counts=P7.rna, project=Pt7Name)
+P7_adt_assay <- CreateAssay5Object(counts = P7.adt)
+P7[["ADT"]] <- P7_adt_assay
+P7 <- RenameCells(object=P7, add.cell.id=Pt7Name)
+saveRDS(P7, paste(savedir,"P7_2-U-001_CMML-MPN-NRAS",enddir,sep=""))
+
+
+####### PATIENT 8
+P8file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-02/P8_KB_1_003_101_CMML_MPN_NRAS/outs/filtered_feature_bc_matrix/"
+Pt8Name <- "KB1003101"
+
+P8.counts <- Read10X(data.dir=P8file)
+P8.rna <- P8.counts$`Gene Expression`
+P8.adt <- P8.counts$`Antibody Capture`
+
+P8 <- CreateSeuratObject(counts=P8.rna, project=Pt8Name)
+P8_adt_assay <- CreateAssay5Object(counts = P8.adt)
+P8[["ADT"]] <- P8_adt_assay
+P8 <- RenameCells(object=P8, add.cell.id=Pt8Name)
+saveRDS(P8, paste(savedir,"P8_KB-1-003-101_CMML-MPN-NRAS",enddir,sep=""))
+
+
+####### PATIENT 9
+P9file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-02/P9_KB_10_103_007_CMML_NRAS/outs/filtered_feature_bc_matrix/"
+Pt9Name <- "KB10103007"
+
+P9.counts <- Read10X(data.dir=P9file)
+P9.rna <- P9.counts$`Gene Expression`
+P9.adt <- P9.counts$`Antibody Capture`
+
+P9 <- CreateSeuratObject(counts=P9.rna, project=Pt9Name)
+P9_adt_assay <- CreateAssay5Object(counts = P9.adt)
+P9[["ADT"]] <- P9_adt_assay
+P9 <- RenameCells(object=P9, add.cell.id=Pt9Name)
+saveRDS(P9, paste(savedir,"P9_KB-10-103-007_CMML-NRAS",enddir,sep=""))
+
+
+####### PATIENT 10
+P10file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-02/P10_PDX_9_002_CMML_MDS_KRAS/outs/filtered_feature_bc_matrix/"
+Pt10Name <- "PDX9002"
+
+P10.counts <- Read10X(data.dir=P10file)
+P10.rna <- P10.counts$`Gene Expression`
+P10.adt <- P10.counts$`Antibody Capture`
+
+P10 <- CreateSeuratObject(counts=P10.rna, project=Pt10Name)
+P10_adt_assay <- CreateAssay5Object(counts = P10.adt)
+P10[["ADT"]] <- P10_adt_assay
+P10 <- RenameCells(object=P10, add.cell.id=Pt10Name)
+saveRDS(P10, paste(savedir,"P10_PDX-9-002_CMML-MDS-KRAS",enddir,sep=""))
+
+
+##<------------------------------
+
+
+
 
