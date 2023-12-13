@@ -9,7 +9,9 @@ library('Seurat', lib.loc=libraryPath)
 options(Seurat.object.assay.version = "v5")
 
 
-
+##################################################################
+## Load in the data
+##################################################################
 
 # Load in the RNA UMI matrix
 
@@ -19,7 +21,6 @@ options(Seurat.object.assay.version = "v5")
 cbmc.rna <- as.sparse(read.csv(file = "./data/GSE100866_CBMC_8K_13AB_10X-RNA_umi.csv.gz", 
                                sep = ",", header = TRUE, row.names = 1))
 
-##<--------------------------------------------------------
 # To make life a bit easier going forward, we're going to discard all but the top 100 most
 # highly expressed mouse genes, and remove the 'HUMAN_' from the CITE-seq prefix
 cbmc.rna <- CollapseSpeciesExpressionMatrix(cbmc.rna)
@@ -32,17 +33,64 @@ cbmc.adt <- as.sparse(read.csv(file = "./data/GSE100866_CBMC_8K_13AB_10X-ADT_umi
 # column names
 all.equal(colnames(cbmc.rna), colnames(cbmc.adt))
 
+##################################################################
+## Setup a Seurat object, add the RNA and protein data
+##################################################################
+
+# creates a Seurat object based on the scRNA-seq data
+cbmc <- CreateSeuratObject(counts = cbmc.rna)
+
+# We can see that by default, the cbmc object contains an assay storing RNA measurement
+Assays(cbmc)
+
+# create a new assay to store ADT information
+adt_assay <- CreateAssay5Object(counts = cbmc.adt)
+
+# add this assay to the previously created Seurat object
+cbmc[["ADT"]] <- adt_assay
+
+# Validate that the object now contains multiple assays
+Assays(cbmc)
+
+# Extract a list of features measured in the ADT assay
+rownames(cbmc[["ADT"]])
+
+# Note that we can easily switch back and forth between the two assays to specify the default
+# for visualization and analysis
+
+# List the current default assay
+DefaultAssay(cbmc)
+
+# Switch the default to ADT
+DefaultAssay(cbmc) <- "ADT"
+
+DefaultAssay(cbmc)
+
+##################################################################
+## 
+##################################################################
+##<--------------------------------------------------------
+
+
+
+
+##################################################################
+## 
+##################################################################
 
 
 
 
 
+##################################################################
+## 
+##################################################################
 
 
 
 
-
-
-
+##################################################################
+## 
+##################################################################
 
 

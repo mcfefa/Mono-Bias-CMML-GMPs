@@ -38,13 +38,33 @@ remotes::install_github("stuart-lab/signac", "seurat5", lib=libraryPath, quiet =
 #### CREATING INDIVIDUAL RDS FILES FOR EACH TOTALSEQ PATIENT
 
 savedir <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/CMML-"
-enddir <-"_Unprocessed-RDS_2023-12-11.rds"
+enddir <-"_Unprocessed-RDS_2023-12-13.rds"
 
 P1file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/P1_RX_1_001_CMML_MPN_NRAS/outs/filtered_feature_bc_matrix/"
 
 P1.counts <- Read10X(data.dir=P1file)
+P1.rna <- P1.counts$`Gene Expression`
+P1.adt <- P1.counts$`Antibody Capture`
+
+all.equal(colnames(P1.rna), colnames(P1.adt))
+
 ##<------------------------------
-P1 <- CreateSeuratObject(counts=P1.counts, project="RX1001")
+# creates a Seurat object based on the scRNA-seq data
+P1 <- CreateSeuratObject(counts=P1.rna, project="RX1001")
+
+# create a new assay to store ADT information
+P1_adt_assay <- CreateAssay5Object(counts = P1.adt)
+
+# add this assay to the previously created Seurat object
+P1[["ADT"]] <- P1_adt_assay
+
+# Validate that the object now contains multiple assays
+Assays(P1)
+
+# Extract a list of features measured in the ADT assay
+rownames(P1[["ADT"]])
+
+
 ##class(P1[["RNA"]])
 P1 <- RenameCells(object=P1, add.cell.id="RX1001")
 saveRDS(P1, paste(savedir,"P1_RX-1-001_CMML-MPN-NRAS",enddir,sep=""))
