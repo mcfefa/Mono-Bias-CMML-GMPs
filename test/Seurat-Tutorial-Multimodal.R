@@ -67,11 +67,96 @@ DefaultAssay(cbmc) <- "ADT"
 DefaultAssay(cbmc)
 
 ##################################################################
-## 
+## Mapping human peripheral blood cells
 ##################################################################
+# Tutorial 2: https://satijalab.org/seurat/articles/multimodal_reference_mapping.html#example-2-mapping-human-bone-marrow-cells
+options(SeuratData.repo.use = "http://seurat.nygenome.org")
+
+library(SeuratData,lib.loc=libraryPath)
+
+# load reference data
+InstallData("bmcite")
+bm <- LoadData(ds = "bmcite")
+# load query data
+InstallData('hcabm40k')
+hcabm40k <- LoadData(ds = "hcabm40k")
+
+bm <- RunUMAP(bm, nn.name = "weighted.nn", reduction.name = "wnn.umap", 
+              reduction.key = "wnnUMAP_", return.model = TRUE)
+DimPlot(bm, group.by = "celltype.l2", reduction = "wnn.umap") 
+
+# computing an sPCA transformation
+bm <- ScaleData(bm, assay = 'RNA')
+bm <- RunSPCA(bm, assay = 'RNA', graph = 'wsnn')
+
+# computing a cached neighbor index
+bm <- FindNeighbors(
+  object = bm,
+  reduction = "spca",
+  dims = 1:50,
+  graph.name = "spca.annoy.neighbors", 
+  k.param = 50,
+  cache.index = TRUE,
+  return.neighbor = TRUE,
+  l2.norm = TRUE
+)
+
+
+# query dataset preprocessing
+hcabm40k.batches <- SplitObject(hcabm40k, split.by = "orig.ident")
+
+hcabm40k.batches <- lapply(X = hcabm40k.batches, FUN = NormalizeData, verbose = FALSE)
+
+# mapping
+anchors <- list()
+for (i in 1:length(hcabm40k.batches)) {
+  anchors[[i]] <- FindTransferAnchors(
+    reference = bm,
+    query = hcabm40k.batches[[i]],
+    k.filter = NA,
+    reference.reduction = "spca", 
+    reference.neighbors = "spca.annoy.neighbors", 
+    dims = 1:50
+  )
+}
+
+# mapping individually
+for (i in 1:length(hcabm40k.batches)) {
+  hcabm40k.batches[[i]] <- MapQuery(
+    anchorset = anchors[[i]], 
+    query = hcabm40k.batches[[i]],
+    reference = bm, 
+    refdata = list(
+      celltype = "celltype.l2", 
+      predicted_ADT = "ADT"),
+    reference.reduction = "spca",
+    reduction.model = "wnn.umap"
+  )
+}
 ##<--------------------------------------------------------
+# explore the mapping results
+p1 <- DimPlot(hcabm40k.batches[[1]], reduction = 'ref.umap', group.by = 'predicted.celltype', label.size = 3)
+p2 <- DimPlot(hcabm40k.batches[[2]], reduction = 'ref.umap', group.by = 'predicted.celltype', label.size = 3)
+p1 + p2 + plot_layout(guides = "collect")
 
+# Merge the batches 
+hcabm40k <- merge(hcabm40k.batches[[1]], hcabm40k.batches[2:length(hcabm40k.batches)], merge.dr = "ref.umap")
+DimPlot(hcabm40k, reduction = "ref.umap", group.by =  "predicted.celltype", label = TRUE, repel = TRUE, label.size = 3) + NoLegend()
 
+p3 <- FeaturePlot(hcabm40k, features = c("rna_TRDC", "rna_MPO", "rna_AVP"), reduction = 'ref.umap', 
+                  max.cutoff = 3, ncol = 3)
+
+# cell type prediction scores
+DefaultAssay(hcabm40k) <- 'prediction.score.celltype'
+p4 <- FeaturePlot(hcabm40k, features = c("CD16 Mono", "HSC", "Prog-RBC"), ncol = 3, 
+                  cols = c("lightgrey", "darkred"))
+
+# imputed protein levels
+DefaultAssay(hcabm40k) <- 'predicted_ADT'
+p5 <- FeaturePlot(hcabm40k, features = c("CD45RA", "CD16", "CD161"), reduction = 'ref.umap',
+                  min.cutoff = 'q10', max.cutoff = 'q99', cols = c("lightgrey", "darkgreen") ,
+                  ncol = 3)
+p3 / p4 / p5
 
 
 ##################################################################

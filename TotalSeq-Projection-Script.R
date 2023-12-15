@@ -283,15 +283,55 @@ saveRDS(TotalSeqCohort, paste(dir,"Cohort-PostScaling_",date,".rds",sep=""))
 ## DIMENSION REDUCTION - PCA
 ##################################################################
 
+## Load TotalSeq Cohort Seurat Object (R crashed)
+totalseqfile <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-Cohort-PostScaling_2023-12-15.rds"
+TotalSeqCohort <- readRDS(totalseqfile)
+
 # Run, plot and save PCA
 TotalSeqCohort <- RunPCA(TotalSeqCohort, features = VariableFeatures(object = TotalSeqCohort))
 
-pdf(paste(dir, 'PCA_standard_seurat_pipeline_preHarmony_', date, '.pdf'), width = 10, height = 2)
+# PC_ 1 
+# Positive:  SSBP2, MSI2, RNF220, PLCB1, ATP8B4, CHST11, KCNQ5, DNAJC1, CALN1, PROM1 
+# ERG, ATP2C1, AL589693.1, DACH1, FLT3, MEIS1, PRKCH, SPINK2, SMYD3, CASC15 
+# MAN1A1, LNCAROD, CCSER1, ZEB1, ZBTB20, FCHSD2, SPTBN1, COL24A1, NAALADL2, C1QTNF4 
+# Negative:  S100A6, BLVRB, HBB, S100A4, AHSP, CD36, HBA1, FTH1, FAM178B, KCNH2 
+# CST3, KLF1, S100A9, ANK1, LGALS3, HBA2, HBD, PSAP, PLIN2, FCN1 
+# IFI30, APOC1, RHAG, GATA1, PRDX2, SMIM1, S100A8, HMBS, CA1, MYL4 
+# PC_ 2 
+# Positive:  PRDX2, ANK1, FAM178B, KLF1, ATP5IF1, REXO2, KCNH2, UROD, AHSP, TFR2 
+# GATA1, SMIM1, APOC1, HBD, EPCAM, RHAG, SYNGR1, TMEM14C, KEL, CA1 
+# GLRX5, HNRNPAB, MPC2, HMBS, HBB, SLC40A1, HBA1, SLC25A21, MYL4, NFIA 
+# Negative:  RBM47, PIK3R5, VIM, ATP2B1, GAS7, LYZ, CTSS, VCAN, STK10, PLEK 
+# NAMPT, NEAT1, JARID2, ANXA1, COTL1, FAM107B, IFI30, S100A10, PTPRJ, RAB31 
+# S100A11, SRGN, FAM49A, LGALS1, AHR, FNDC3B, FGR, FCN1, FCER1G, ZEB2 
+# PC_ 3 
+# Positive:  RRM2, DIAPH3, POLQ, SHCBP1, NCAPG2, RBL1, MKI67, NUSAP1, NCAPG, KIF11 
+# AFF3, ASPM, ANLN, ATAD5, NDC80, HDAC9, BRIP1, IRF8, Z94721.1, C12orf75 
+# HMGB2, CIT, MELK, ECT2, TOP2A, SAMHD1, HELLS, MPO, ZNF367, CENPP 
+# Negative:  FTH1, ZNF385D, ZFP36L1, MTSS1, MAFB, FOXO1, CLEC7A, SQSTM1, C5AR1, PDZD2 
+# APOBEC3A, SLC24A3, CD300E, PRKG1, SERPINA1, ITGAX, TYROBP, LGALS3, SAT1, PID1 
+# BCL2A1, G0S2, IL1B, CEBPB, IFI30, GPC5, SLC11A1, CHST15, ITGA9, ST8SIA6 
+# PC_ 4 
+# Positive:  TUBA1B, TMSB4X, H2AFZ, C1QTNF4, HLA-DRA, HMGN2, HLA-DPA1, H1FX, NPW, IGLL1 
+# TUBB, CD74, IGFBP2, MPO, ATP5IF1, CTSG, STMN1, CFD, PRDX2, SYNGR1 
+# HLA-DRB1, PTTG1, SPINK2, DUT, ELANE, AZU1, CST7, PRTN3, CRIP1, GLRX5 
+# Negative:  ZBTB20, STXBP5, XACT, PDZD8, RYR3, MED12L, ZNF804A, ST8SIA6, TAFA2, KIAA1211 
+# SLC12A6, TNIK, ABCC4, PBX1, NLK, FREM1, LDLRAD4, CDC42BPA, ARL15, AC069410.1 
+# RAD51B, PIP5K1B, FER, NKAIN2, INPP4B, SMYD3, SCLT1, IMMP2L, PLXDC2, ZNF385D 
+# PC_ 5 
+# Positive:  AZU1, MPO, ELANE, PRTN3, FNDC3B, RNASE2, SRGN, AFF2, MS4A3, CFD 
+# SERPINB10, LYST, CTSG, CST7, EREG, TENT5A, SLC22A15, ATP8B4, KCNQ5, MNDA 
+# ANXA1, ACSM3, PDE4D, LYZ, IL1RAP, CSTA, LIN7A, AC020656.1, RETN, IGFBP2 
+# Negative:  CARD11, FAM160A1, ARL4C, PPP1R16B, BLNK, JCHAIN, IGKC, PTPRS, CD74, NIBAN3 
+# ADAM19, PALD1, HLA-DPA1, AC023590.1, LINC01374, SCT, IRF4, SETBP1, SEL1L3, CIITA 
+# HLA-DQA1, IGHM, HLA-DRA, PLXNA4, LGMN, UGCG, PACSIN1, RUBCNL, BCAR3, IRF8
+
+pdf(paste(dir, "PCA_DimPlot_", date,".pdf",sep=""), width = 11, height = 6)
 DimPlot(TotalSeqCohort, reduction = "pca", pt.size = 0.0001)
 dev.off()
 
 # Determine dimensionality of dataset
-pdf(paste(dir, 'PCA_ElbowPlot_standard_seurat_pipeline_preHarmony_', date, '.pdf'), width = 10, height = 2)
+pdf(paste(dir,"PCA_ElbowPlot_",date,".pdf",sep=""), width = 11, height = 6)
 ElbowPlot(TotalSeqCohort, ndims = 50)
 dev.off()
 
@@ -301,7 +341,7 @@ saveRDS(TotalSeqCohort, paste(dir,"Cohort-PostPCA_",date,".rds",sep=""))
 ## MULTIMODAL REFERENCE MAPPING
 ##################################################################
 ## Tutorial: https://satijalab.org/seurat/articles/multimodal_reference_mapping.html
-##<--------------------------------------------------------
+
 ## Load BCD Seurat Object
 reffile <- "/blue/ferrallm/00_data/single-cell/CMML/BCD/allSeurat_39+8_postStandardPipeline_withHarmony_withSeuratGeneScores_05-20-2021_withWNT-2022-04-26.rds"
 reference <- readRDS(reffile)
@@ -314,8 +354,7 @@ anchors <- FindTransferAnchors(
   reference.reduction = "pca",
   dims = 1:50
 )
-
-####### TODO: UPDATE REFDATA WITH PREDICTIONS TO MAKE ---- MOSTLY CLUSTER, PHENOTYPE, ETC
+##<--------------------------------------------------------
 
 ## Map onto Reference
 TotalSeqCohort <- MapQuery(
@@ -323,9 +362,10 @@ TotalSeqCohort <- MapQuery(
   query = TotalSeqCohort,
   reference = reference,
   refdata = list(
-    celltype.l1 = "celltype.l1",
-    celltype.l2 = "celltype.l2",
-    predicted_ADT = "ADT"
+    predicted_cluster = "clusterResolution_0.05",
+    predicted_Wu_GMP = "wu_GMP",
+    predicted_Wu_HSC = "wu_HSC",
+    predicted_Wu_MEP = "wu_MEP"
   ),
   reference.reduction = "pca", 
   reduction.model = "umap"
