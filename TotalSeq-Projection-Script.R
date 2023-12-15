@@ -28,17 +28,17 @@ remotes::install_github("satijalab/seurat", "seurat5", lib=libraryPath, quiet = 
 
 library('Seurat', lib.loc=libraryPath)
 
-
 remotes::install_github("satijalab/seurat-data", "seurat5", lib=libraryPath, quiet = TRUE)
 remotes::install_github("satijalab/azimuth", "seurat5", lib=libraryPath, quiet = TRUE)
 remotes::install_github("satijalab/seurat-wrappers", "seurat5", lib=libraryPath, quiet = TRUE)
 remotes::install_github("stuart-lab/signac", "seurat5", lib=libraryPath, quiet = TRUE)
 
-
-#### CREATING INDIVIDUAL RDS FILES FOR EACH TOTALSEQ PATIENT
+##################################################################
+##  CREATING INDIVIDUAL RDS FILES FOR EACH TOTALSEQ PATIENT
+##################################################################
 
 savedir <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/CMML-"
-enddir <-"_Unprocessed-RDS_2023-12-14.rds"
+enddir <-"_Unprocessed-RDS_2023-12-15.rds"
 
 ##### PATIENT 1
 P1file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/P1_RX_1_001_CMML_MPN_NRAS/outs/filtered_feature_bc_matrix/"
@@ -66,7 +66,6 @@ rownames(P1[["ADT"]])
 
 P1 <- RenameCells(object=P1, add.cell.id="RX1001")
 saveRDS(P1, paste(savedir,"P1_RX-1-001_CMML-MPN-NRAS",enddir,sep=""))
-
 
 ####### PATIENT 2
 P2file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/P2_RX_4_001_CMML_MPN_KRAS/outs/filtered_feature_bc_matrix/"
@@ -124,7 +123,6 @@ P5[["ADT"]] <- P5_adt_assay
 P5 <- RenameCells(object=P5, add.cell.id=Pt5Name)
 saveRDS(P5, paste(savedir,"P5_KB-14-103-011_CMML-MPN-NRAS",enddir,sep=""))
 
-##<------------------------------
 ####### PATIENT 6
 P6file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-02/P6_1_X_001_CMML_MPN_KRAS/outs/filtered_feature_bc_matrix/"
 Pt6Name <- "1X001"
@@ -138,7 +136,6 @@ P6_adt_assay <- CreateAssay5Object(counts = P6.adt)
 P6[["ADT"]] <- P6_adt_assay
 P6 <- RenameCells(object=P6, add.cell.id=Pt6Name)
 saveRDS(P6, paste(savedir,"P6_1-X-001_CMML-MPN-KRAS",enddir,sep=""))
-
 
 ####### PATIENT 7
 P7file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-02/P7_2_U_001_CMML_MPN_NRAS/outs/filtered_feature_bc_matrix/"
@@ -154,7 +151,6 @@ P7[["ADT"]] <- P7_adt_assay
 P7 <- RenameCells(object=P7, add.cell.id=Pt7Name)
 saveRDS(P7, paste(savedir,"P7_2-U-001_CMML-MPN-NRAS",enddir,sep=""))
 
-
 ####### PATIENT 8
 P8file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-02/P8_KB_1_003_101_CMML_MPN_NRAS/outs/filtered_feature_bc_matrix/"
 Pt8Name <- "KB1003101"
@@ -168,7 +164,6 @@ P8_adt_assay <- CreateAssay5Object(counts = P8.adt)
 P8[["ADT"]] <- P8_adt_assay
 P8 <- RenameCells(object=P8, add.cell.id=Pt8Name)
 saveRDS(P8, paste(savedir,"P8_KB-1-003-101_CMML-MPN-NRAS",enddir,sep=""))
-
 
 ####### PATIENT 9
 P9file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-02/P9_KB_10_103_007_CMML_NRAS/outs/filtered_feature_bc_matrix/"
@@ -184,7 +179,6 @@ P9[["ADT"]] <- P9_adt_assay
 P9 <- RenameCells(object=P9, add.cell.id=Pt9Name)
 saveRDS(P9, paste(savedir,"P9_KB-10-103-007_CMML-NRAS",enddir,sep=""))
 
-
 ####### PATIENT 10
 P10file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-02/P10_PDX_9_002_CMML_MDS_KRAS/outs/filtered_feature_bc_matrix/"
 Pt10Name <- "PDX9002"
@@ -199,6 +193,100 @@ P10[["ADT"]] <- P10_adt_assay
 P10 <- RenameCells(object=P10, add.cell.id=Pt10Name)
 saveRDS(P10, paste(savedir,"P10_PDX-9-002_CMML-MDS-KRAS",enddir,sep=""))
 
+####### MERGE SEURAT OBJECTS
+TotalSeqCohort <- merge(x=P1, y=list(P2,P3,P4,P5,P6,P7,P8,P9,P10), merge.data=TRUE, project="TotalSeq")
+saveRDS(TotalSeqCohort, paste(savedir,"TotalSeqCohort-Merged",enddir,sep=""))
+
+##################################################################
+##  QUALITY CONTROL - FILTER, NORMALIZE, SCALE DATA
+##################################################################
+
+TotalSeqCohort[['']] <- TotalSeqCohort@active.ident
+
+######## Get Summary of nFeature RNA Distribution
+summary(TotalSeqCohort@meta.data$nFeature_RNA)
+#  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+#   47    2511    3707    3698    4871   10798 
+
+######## Original Stats from CMML Cohort published in BCD
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 17    1067    2418    2496    3654    9742
+
+## Determining how upper cutoff for nFeatures compares
+## nFeatUpper_CMML <- mean(first39@meta.data$nFeature_RNA, na.rm=TRUE) + 2*sd(first39@meta.data$nFeature_RNA, na.rm=TRUE) # 5808.62 (consistent with Meghan)
+nFeatUpper_CMML <- mean(TotalSeqCohort@meta.data$nFeature_RNA, na.rm=TRUE) + 2*sd(TotalSeqCohort@meta.data$nFeature_RNA, na.rm=TRUE) # [1] 7239.94
+## moved ahead with same procedure, may come back and limit upper level of nFeatures in the future
+nFeatLower_CMML <- 450 
+
+## Calculate mito percentage
+TotalSeqCohort[["percent.mito"]] <- PercentageFeatureSet(TotalSeqCohort, pattern = "^MT-")
+perMitoUpper_CMML <- 25
+
+## Visualize QC metrics
+dir <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-"
+date <- "2023-12-15"
+
+pdf(paste(dir,"VlnPlot_nFeature+nCount+PercentMito_",date,".pdf",sep=""), width = 11, height = 6)
+v <- VlnPlot(TotalSeqCohort, features = c("nFeature_RNA", "nCount_RNA", "percent.mito"), ncol = 3)
+print(v)
+dev.off()
+
+pdf(paste(dir, "FeatureScatter_nCountvMito_nCountvnFeature_", date, ".pdf",sep=""), width = 11, height = 6)
+plot1 <- FeatureScatter(TotalSeqCohort, feature1 = "nCount_RNA", feature2 = "percent.mito")
+plot2 <- FeatureScatter(TotalSeqCohort, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+cPlot <- CombinePlots(plots = list(plot1, plot2))
+print(cPlot)
+dev.off()
+
+## original dataset dimensions
+dim(TotalSeqCohort)
+# [1]  36601 101828
+
+## filtered based on approach
+dim(subset(TotalSeqCohort, subset = nFeature_RNA > nFeatLower_CMML & nFeature_RNA < nFeatUpper_CMML & percent.mito < perMitoUpper_CMML))
+# [1] 36601 92415
+
+## filtered based on strict number values from BCD
+dim(subset(TotalSeqCohort, subset = nFeature_RNA > nFeatLower_CMML & nFeature_RNA < 5808.62 & percent.mito < perMitoUpper_CMML))
+# [1] 36601 82922
+
+######## Filter Cohort based on cutoffs
+TotalSeqCohort <- subset(TotalSeqCohort, subset = nFeature_RNA > nFeatLower_CMML & nFeature_RNA < nFeatUpper_CMML & percent.mito < perMitoUpper_CMML)
+saveRDS(TotalSeqCohort, paste(dir,"Cohort-PostFiltering_",date,".rds",sep=""))
+
+##<--------------------------------------------------------
+######## Normalizing data
+TotalSeqCohort <- NormalizeData(TotalSeqCohort, normalization.method = "LogNormalize", scale.factor = 10000)
+
+######## Identification of highly variable features
+pbmc <- FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 2000)
+
+# Identify the 10 most highly variable genes
+top10 <- head(VariableFeatures(pbmc), 10)
+
+# plot variable features with and without labels
+plot1 <- VariableFeaturePlot(pbmc)
+plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
+CombinePlots(plots = list(plot1, plot2))
+
+##################################################################
+## 
+##################################################################
+
+
+
+
+
+##################################################################
+## 
+##################################################################
+
+
+
+
+##################################################################
+## 
+##################################################################
 
 
 
