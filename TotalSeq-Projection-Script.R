@@ -38,7 +38,7 @@ remotes::install_github("stuart-lab/signac", "seurat5", lib=libraryPath, quiet =
 #### CREATING INDIVIDUAL RDS FILES FOR EACH TOTALSEQ PATIENT
 
 savedir <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/CMML-"
-enddir <-"_Unprocessed-RDS_2023-12-13.rds"
+enddir <-"_Unprocessed-RDS_2023-12-14.rds"
 
 ##### PATIENT 1
 P1file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/P1_RX_1_001_CMML_MPN_NRAS/outs/filtered_feature_bc_matrix/"
@@ -97,7 +97,7 @@ P3 <- RenameCells(object=P3, add.cell.id=Pt3Name)
 saveRDS(P3, paste(savedir,"P3_RX-8-001_CMML-MPN-KRAS",enddir,sep=""))
 
 ####### PATIENT 4
-P4file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/P4_KB_13_103_010_MPN_NRAS/outs/filtered_feature_bc_matrix/"
+P4file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/P4_KB_13_103_010_CMML_NRAS/outs/filtered_feature_bc_matrix/"
 Pt4Name <- "KB13103010"
 
 P4.counts <- Read10X(data.dir=P4file)
@@ -110,9 +110,8 @@ P4[["ADT"]] <- P4_adt_assay
 P4 <- RenameCells(object=P4, add.cell.id=Pt4Name)
 saveRDS(P4, paste(savedir,"P4_KB-13-103-010_CMML-MPN-NRAS",enddir,sep=""))
 
-
 ####### PATIENT 5
-P5file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/P5_KB_14_103_011_MPN_NRAS/outs/filtered_feature_bc_matrix/"
+P5file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-01/P5_KB_14_103_011_CMML_NRAS/outs/filtered_feature_bc_matrix/"
 Pt5Name <- "KB14103011"
 
 P5.counts <- Read10X(data.dir=P5file)
@@ -125,7 +124,7 @@ P5[["ADT"]] <- P5_adt_assay
 P5 <- RenameCells(object=P5, add.cell.id=Pt5Name)
 saveRDS(P5, paste(savedir,"P5_KB-14-103-011_CMML-MPN-NRAS",enddir,sep=""))
 
-
+##<------------------------------
 ####### PATIENT 6
 P6file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4448-TotalSeq-Batch-02/P6_1_X_001_CMML_MPN_KRAS/outs/filtered_feature_bc_matrix/"
 Pt6Name <- "1X001"
@@ -201,7 +200,7 @@ P10 <- RenameCells(object=P10, add.cell.id=Pt10Name)
 saveRDS(P10, paste(savedir,"P10_PDX-9-002_CMML-MDS-KRAS",enddir,sep=""))
 
 
-##<------------------------------
+
 
 
 
