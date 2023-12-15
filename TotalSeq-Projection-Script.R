@@ -201,7 +201,7 @@ saveRDS(TotalSeqCohort, paste(savedir,"TotalSeqCohort-Merged",enddir,sep=""))
 ##  QUALITY CONTROL - FILTER, NORMALIZE, SCALE DATA
 ##################################################################
 
-TotalSeqCohort[['']] <- TotalSeqCohort@active.ident
+## TotalSeqCohort[['']] <- TotalSeqCohort@active.ident
 
 ######## Get Summary of nFeature RNA Distribution
 summary(TotalSeqCohort@meta.data$nFeature_RNA)
@@ -254,34 +254,66 @@ dim(subset(TotalSeqCohort, subset = nFeature_RNA > nFeatLower_CMML & nFeature_RN
 TotalSeqCohort <- subset(TotalSeqCohort, subset = nFeature_RNA > nFeatLower_CMML & nFeature_RNA < nFeatUpper_CMML & percent.mito < perMitoUpper_CMML)
 saveRDS(TotalSeqCohort, paste(dir,"Cohort-PostFiltering_",date,".rds",sep=""))
 
-##<--------------------------------------------------------
 ######## Normalizing data
 TotalSeqCohort <- NormalizeData(TotalSeqCohort, normalization.method = "LogNormalize", scale.factor = 10000)
 
 ######## Identification of highly variable features
-pbmc <- FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 2000)
+TotalSeqCohort <- FindVariableFeatures(TotalSeqCohort, selection.method = "vst", nfeatures = 2000)
 
 # Identify the 10 most highly variable genes
-top10 <- head(VariableFeatures(pbmc), 10)
+top10 <- head(VariableFeatures(TotalSeqCohort), 10)
 
 # plot variable features with and without labels
-plot1 <- VariableFeaturePlot(pbmc)
+pdf(paste(dir, "VariableFeaturePlot_", date, ".pdf",sep=""), width = 11, height = 6)
+plot1 <- VariableFeaturePlot(TotalSeqCohort)
 plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
-CombinePlots(plots = list(plot1, plot2))
+cPlot2 <- CombinePlots(plots = list(plot1, plot2))
+print(cPlot2)
+dev.off()
+
+saveRDS(TotalSeqCohort, paste(dir,"Cohort-PostNormalization_",date,".rds",sep=""))
+
+######## Scale data
+# Scale data (only use HVG), regressing out effects of nCountRNA and percent.mito
+TotalSeqCohort <- ScaleData(TotalSeqCohort, features = VariableFeatures(TotalSeqCohort), vars.to.regress = c("nCount_RNA","percent.mito"))
+
+saveRDS(TotalSeqCohort, paste(dir,"Cohort-PostScaling_",date,".rds",sep=""))
 
 ##################################################################
-## 
+## DIMENSION REDUCTION - PCA
 ##################################################################
+##<--------------------------------------------------------
+# Run, plot and save PCA
+TotalSeqCohort <- RunPCA(TotalSeqCohort, features = VariableFeatures(object = TotalSeqCohort))
 
+pdf(paste(dir, 'PCA_standard_seurat_pipeline_preHarmony_', date, '.pdf'), width = 10, height = 2)
+DimPlot(TotalSeqCohort, reduction = "pca", pt.size = 0.0001)
+dev.off()
 
+# Determine dimensionality of dataset
+pdf(paste(dir, 'PCA_ElbowPlot_standard_seurat_pipeline_preHarmony_', date, '.pdf'), width = 10, height = 2)
+ElbowPlot(TotalSeqCohort, ndims = 50)
+dev.off()
 
-
+saveRDS(TotalSeqCohort, paste(dir,"Cohort-PostPCA_",date,".rds",sep=""))
 
 ##################################################################
-## 
+## MULTIMODAL REFERENCE MAPPING
 ##################################################################
+## Tutorial: https://satijalab.org/seurat/articles/multimodal_reference_mapping.html
 
+## Load BCD Seurat Object
+reffile <- "/blue/ferrallm/00_data/single-cell/CMML/BCD/allSeurat_39+8_postStandardPipeline_withHarmony_withSeuratGeneScores_05-20-2021_withWNT-2022-04-26.rds"
+reference <- readRDS(reffile)
 
+## Find Anchors
+anchors <- FindTransferAnchors(
+  reference = reference,
+  query = pbmc3k,
+  normalization.method = "SCT",
+  reference.reduction = "spca",
+  dims = 1:50
+)
 
 
 ##################################################################
