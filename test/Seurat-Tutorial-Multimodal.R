@@ -133,7 +133,9 @@ for (i in 1:length(hcabm40k.batches)) {
     reduction.model = "wnn.umap"
   )
 }
-##<--------------------------------------------------------
+-
+
+library("patchwork", lib.loc=libraryPath)
 # explore the mapping results
 p1 <- DimPlot(hcabm40k.batches[[1]], reduction = 'ref.umap', group.by = 'predicted.celltype', label.size = 3)
 p2 <- DimPlot(hcabm40k.batches[[2]], reduction = 'ref.umap', group.by = 'predicted.celltype', label.size = 3)
@@ -157,7 +159,7 @@ p5 <- FeaturePlot(hcabm40k, features = c("CD45RA", "CD16", "CD161"), reduction =
                   min.cutoff = 'q10', max.cutoff = 'q99', cols = c("lightgrey", "darkgreen") ,
                   ncol = 3)
 p3 / p4 / p5
-
+##<-------------------------------------------------------
 
 ##################################################################
 ## 

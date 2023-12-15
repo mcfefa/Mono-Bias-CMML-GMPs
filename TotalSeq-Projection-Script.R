@@ -342,9 +342,17 @@ saveRDS(TotalSeqCohort, paste(dir,"Cohort-PostPCA_",date,".rds",sep=""))
 ##################################################################
 ## Tutorial: https://satijalab.org/seurat/articles/multimodal_reference_mapping.html
 
+library("patchwork", lib.loc=libraryPath)
+
 ## Load BCD Seurat Object
 reffile <- "/blue/ferrallm/00_data/single-cell/CMML/BCD/allSeurat_39+8_postStandardPipeline_withHarmony_withSeuratGeneScores_05-20-2021_withWNT-2022-04-26.rds"
 reference <- readRDS(reffile)
+
+## Load TotalSeq Cohort Seurat Object (R crashed -- ran out of memory, prev limit 48GB, expanded)
+totalseqfile <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-Cohort-PostPCA_2023-12-15.rds"
+TotalSeqCohort <- readRDS(totalseqfile)
+
+##<--------------------------------------------------------
 
 ## Find Anchors
 anchors <- FindTransferAnchors(
@@ -354,7 +362,8 @@ anchors <- FindTransferAnchors(
   reference.reduction = "pca",
   dims = 1:50
 )
-##<--------------------------------------------------------
+saveRDS(anchors, paste(dir,"Anchors-for-BCD_LogNorm-PCA_",date,".rds",sep=""))
+
 
 ## Map onto Reference
 TotalSeqCohort <- MapQuery(
@@ -370,6 +379,9 @@ TotalSeqCohort <- MapQuery(
   reference.reduction = "pca", 
   reduction.model = "umap"
 )
+saveRDS(TotalSeqCohort, paste(dir,"Cohort-mapped-to-BCD-attempt1_",date,".rds",sep=""))
+
+
 
 ##################################################################
 ## 
