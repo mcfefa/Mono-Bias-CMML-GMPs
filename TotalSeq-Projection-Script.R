@@ -352,8 +352,6 @@ reference <- readRDS(reffile)
 totalseqfile <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-Cohort-PostPCA_2023-12-15.rds"
 TotalSeqCohort <- readRDS(totalseqfile)
 
-##<--------------------------------------------------------
-
 ## Find Anchors
 anchors <- FindTransferAnchors(
   reference = reference,
@@ -363,7 +361,6 @@ anchors <- FindTransferAnchors(
   dims = 1:50
 )
 saveRDS(anchors, paste(dir,"Anchors-for-BCD_LogNorm-PCA_",date,".rds",sep=""))
-
 
 ## Map onto Reference
 TotalSeqCohort <- MapQuery(
@@ -381,7 +378,7 @@ TotalSeqCohort <- MapQuery(
 )
 saveRDS(TotalSeqCohort, paste(dir,"Cohort-mapped-to-BCD-attempt1_",date,".rds",sep=""))
 
-
+##<--------------------------------------------------------
 
 ##################################################################
 ## 
