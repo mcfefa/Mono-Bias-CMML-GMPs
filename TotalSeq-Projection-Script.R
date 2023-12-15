@@ -282,7 +282,7 @@ saveRDS(TotalSeqCohort, paste(dir,"Cohort-PostScaling_",date,".rds",sep=""))
 ##################################################################
 ## DIMENSION REDUCTION - PCA
 ##################################################################
-##<--------------------------------------------------------
+
 # Run, plot and save PCA
 TotalSeqCohort <- RunPCA(TotalSeqCohort, features = VariableFeatures(object = TotalSeqCohort))
 
@@ -301,7 +301,7 @@ saveRDS(TotalSeqCohort, paste(dir,"Cohort-PostPCA_",date,".rds",sep=""))
 ## MULTIMODAL REFERENCE MAPPING
 ##################################################################
 ## Tutorial: https://satijalab.org/seurat/articles/multimodal_reference_mapping.html
-
+##<--------------------------------------------------------
 ## Load BCD Seurat Object
 reffile <- "/blue/ferrallm/00_data/single-cell/CMML/BCD/allSeurat_39+8_postStandardPipeline_withHarmony_withSeuratGeneScores_05-20-2021_withWNT-2022-04-26.rds"
 reference <- readRDS(reffile)
@@ -309,12 +309,27 @@ reference <- readRDS(reffile)
 ## Find Anchors
 anchors <- FindTransferAnchors(
   reference = reference,
-  query = pbmc3k,
-  normalization.method = "SCT",
-  reference.reduction = "spca",
+  query = TotalSeqCohort,
+  normalization.method = "LogNormalize",
+  reference.reduction = "pca",
   dims = 1:50
 )
 
+####### TODO: UPDATE REFDATA WITH PREDICTIONS TO MAKE ---- MOSTLY CLUSTER, PHENOTYPE, ETC
+
+## Map onto Reference
+TotalSeqCohort <- MapQuery(
+  anchorset = anchors,
+  query = TotalSeqCohort,
+  reference = reference,
+  refdata = list(
+    celltype.l1 = "celltype.l1",
+    celltype.l2 = "celltype.l2",
+    predicted_ADT = "ADT"
+  ),
+  reference.reduction = "pca", 
+  reduction.model = "umap"
+)
 
 ##################################################################
 ## 
