@@ -26,12 +26,20 @@ libraryPath <- "/home/ferrallm/Mono-Bias-CMML-GMPs/lib2"
 remotes::install_github("mojaveazure/seurat-object", "seurat5", lib=libraryPath)
 remotes::install_github("satijalab/seurat", "seurat5", lib=libraryPath, quiet = TRUE)
 
+library('ggplot2', lib.loc=libraryPath)
 library('Seurat', lib.loc=libraryPath)
+library('patchwork', lib.loc=libraryPath)
+
 
 remotes::install_github("satijalab/seurat-data", "seurat5", lib=libraryPath, quiet = TRUE)
 remotes::install_github("satijalab/azimuth", "seurat5", lib=libraryPath, quiet = TRUE)
 remotes::install_github("satijalab/seurat-wrappers", "seurat5", lib=libraryPath, quiet = TRUE)
 remotes::install_github("stuart-lab/signac", "seurat5", lib=libraryPath, quiet = TRUE)
+
+## output strings and directories
+dir <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-"
+date <- "2023-12-18"
+
 
 ##################################################################
 ##  CREATING INDIVIDUAL RDS FILES FOR EACH TOTALSEQ PATIENT
@@ -223,9 +231,6 @@ TotalSeqCohort[["percent.mito"]] <- PercentageFeatureSet(TotalSeqCohort, pattern
 perMitoUpper_CMML <- 25
 
 ## Visualize QC metrics
-dir <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-"
-date <- "2023-12-15"
-
 pdf(paste(dir,"VlnPlot_nFeature+nCount+PercentMito_",date,".pdf",sep=""), width = 11, height = 6)
 v <- VlnPlot(TotalSeqCohort, features = c("nFeature_RNA", "nCount_RNA", "percent.mito"), ncol = 3)
 print(v)
@@ -284,8 +289,8 @@ saveRDS(TotalSeqCohort, paste(dir,"Cohort-PostScaling_",date,".rds",sep=""))
 ##################################################################
 
 ## Load TotalSeq Cohort Seurat Object (R crashed)
-totalseqfile <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-Cohort-PostScaling_2023-12-15.rds"
-TotalSeqCohort <- readRDS(totalseqfile)
+# totalseqfile <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-Cohort-PostScaling_2023-12-15.rds"
+# TotalSeqCohort <- readRDS(totalseqfile)
 
 # Run, plot and save PCA
 TotalSeqCohort <- RunPCA(TotalSeqCohort, features = VariableFeatures(object = TotalSeqCohort))
@@ -342,8 +347,6 @@ saveRDS(TotalSeqCohort, paste(dir,"Cohort-PostPCA_",date,".rds",sep=""))
 ##################################################################
 ## Tutorial: https://satijalab.org/seurat/articles/multimodal_reference_mapping.html
 
-library("patchwork", lib.loc=libraryPath)
-
 ## Load BCD Seurat Object
 reffile <- "/blue/ferrallm/00_data/single-cell/CMML/BCD/allSeurat_39+8_postStandardPipeline_withHarmony_withSeuratGeneScores_05-20-2021_withWNT-2022-04-26.rds"
 reference <- readRDS(reffile)
@@ -353,14 +356,18 @@ totalseqfile <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-T
 TotalSeqCohort <- readRDS(totalseqfile)
 
 ## Find Anchors
-anchors <- FindTransferAnchors(
-  reference = reference,
-  query = TotalSeqCohort,
-  normalization.method = "LogNormalize",
-  reference.reduction = "pca",
-  dims = 1:50
-)
-saveRDS(anchors, paste(dir,"Anchors-for-BCD_LogNorm-PCA_",date,".rds",sep=""))
+anchorsfile <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-Anchors-for-BCD_LogNorm-PCA_2023-12-15.rds"
+anchors <- readRDS(anchorsfile)
+
+# anchors <- FindTransferAnchors(
+#   reference = reference,
+#   query = TotalSeqCohort,
+#   normalization.method = "LogNormalize",
+#   reference.reduction = "pca",
+#   dims = 1:50
+# )
+# saveRDS(anchors, paste(dir,"Anchors-for-BCD_LogNorm-PCA_",date,".rds",sep=""))
+
 
 ## Map onto Reference
 TotalSeqCohort <- MapQuery(
