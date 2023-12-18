@@ -370,6 +370,9 @@ anchors <- readRDS(anchorsfile)
 
 
 ## Map onto Reference
+
+##### running into memory issues at this Mapping step, attempting with 512GB mem (prev fail at 256GB)
+
 TotalSeqCohort <- MapQuery(
   anchorset = anchors,
   query = TotalSeqCohort,
