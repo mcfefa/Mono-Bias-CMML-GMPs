@@ -428,14 +428,15 @@ for (i in 1:length(TotalSeqCohort.batches)) {
       predicted_Wu_GMP = "wu_GMP",
       predicted_Wu_HSC = "wu_HSC",
       predicted_Wu_MEP = "wu_MEP"),
-    reference.reduction = "spca",
-    reduction.model = "umpa"
+    reference.reduction = "pca",
+    reduction.model = "umap"
   )
 }
 saveRDS(TotalSeqCohort.batches, paste(dir,"Cohort-mapped-to-BCD-attempt2_",date,".rds",sep=""))
 
 ##<--------------------------------------------------------
 
+##################################################################
 ##################################################################
 ## 
 ##################################################################
