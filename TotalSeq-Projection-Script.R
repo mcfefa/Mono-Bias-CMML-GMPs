@@ -418,20 +418,34 @@ for (i in 1:length(TotalSeqCohort.batches)) {
 saveRDS(anchors, paste(dir,"Anchors-for-BCD_Individual-Batches_",date,".rds",sep=""))
 
 ## Individual Mapping
-for (i in 1:length(TotalSeqCohort.batches)) {
+##   running/troubleshooting with firrst sample and then will loop through remainder of batches
+##   also slimmed down to just repredicting clustering -- re-doing for a wnn.umap to align with tutorial
+
+reference <- RunUMAP(reference, dims=1:50, reduction.name = "umap.v2", reduction.key = "UMAPv2_", return.model = TRUE)
+DimPlot(reference, group.by = "clusterResolution_0.05", reduction = "umap.v2") 
+
+  TotalSeqCohort.batches[[1]] <- MapQuery(
+    anchorset = anchors[[1]], 
+    query = TotalSeqCohort.batches[[1]],
+    reference = reference, 
+    refdata = list(
+      predicted_cluster = "clusterResolution_0.05"),
+    reference.reduction = "pca",
+    reduction.model = "umap.v2"
+  )
+
+for (i in 2:length(TotalSeqCohort.batches)) {
   TotalSeqCohort.batches[[i]] <- MapQuery(
     anchorset = anchors[[i]], 
     query = TotalSeqCohort.batches[[i]],
     reference = reference, 
     refdata = list(
-      predicted_cluster = "clusterResolution_0.05",
-      predicted_Wu_GMP = "wu_GMP",
-      predicted_Wu_HSC = "wu_HSC",
-      predicted_Wu_MEP = "wu_MEP"),
+      predicted_cluster = "clusterResolution_0.05"),
     reference.reduction = "pca",
     reduction.model = "umap"
   )
 }
+
 saveRDS(TotalSeqCohort.batches, paste(dir,"Cohort-mapped-to-BCD-attempt2_",date,".rds",sep=""))
 
 ##<--------------------------------------------------------
