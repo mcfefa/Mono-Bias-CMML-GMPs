@@ -482,6 +482,11 @@ dPlot <- DimPlot(TotalSeqCohortm, reduction = "ref.umap", group.by =  "predicted
 print(dPlot)
 dev.off()
 
+pdf(paste(dir, "DimPlot_BCD-clustering_UMAPv2_", date, ".pdf",sep=""), width = 18, height = 12)
+dPlot <- DimPlot(reference, reduction = "umap.v2", group.by =  "clusterResolution_0.05", label = TRUE, repel = TRUE, label.size = 3) + NoLegend()
+print(dPlot)
+dev.off()
+
 ## exporting cluster composition to csv
 file1 <- paste(dir,"outputDataNames_",date,".csv",sep="")
 file2 <- paste(dir,"outputData_",date,".csv",sep="")
@@ -548,6 +553,84 @@ A$Fraction <- A$n/A$Sum
 divout <- paste(dir,"CellBreakdown_PerClusterPerType_predicted-cluster_",date,".csv",sep="") 
 write.csv(A, file=divout)
 
+## compare with reference 
+## exporting cluster composition to csv
+file1b <- paste(dir,"BCDoutputDataNames_",date,".csv",sep="")
+file2b <- paste(dir,"BCDoutputData_",date,".csv",sep="")
+
+# save the cluster identity for each individual cell --- this is the predicted_cluster based on BCD clustering
+cat(reference@meta.data$clusterResolution_0.05, file=file2b, sep=",\n")
+
+# save the orig.ident per cell (this is the totalseq patient name)
+listNamesB <- reference@meta.data$orig.ident
+write.table(data.frame(listNamesB),
+            row.names = FALSE,
+            col.names = FALSE, 
+            file = file1b,
+            sep = ",")
+
+# merging the two files together in grouping to ultimately write out the number of cells per identity per cluster 
+#(so in this case, we'd end up with A being a table that has 5 samples x number of cluster idenfied number of rows and two columns )
+mydat1b <- read.csv(file2b)
+mydat2b <- read.csv(file1b)
+fulldatb <- cbind(mydat2b[1],mydat1b[1])
+fulltabb <- as.data.table(fulldatb)
+
+# name table columns
+names(fulltabb)[1] <- paste("patient")
+names(fulltabb)[2] <- paste("cluster")
+
+# group data based on clusters
+group_by(fulltabb, cluster)
+
+# create a table counting unqiue UMIs/cells per cluster
+tabPerClusB <- fulltabb %>% group_by(cluster) %>% count()
+typeB <- sub("\\_.*","",fulltabb$patient)
+fulltabb <- cbind(fulltabb, typeB)
+B <- fulltabb %>% group_by(cluster) %>% count(typeB)
+
+#Order A and sum same components
+B <- B[order(B$typeB),]
+count <- 0
+for (i in 1:length(B$typeB)){
+  if ( i == 1){
+    B[i,'PartialSum'] <- B[i,'n']
+    count <- count+1
+  }else if (B[i, 'typeB'] %in% B[i-1, 'typeB']){
+    B[i, 'PartialSum'] <- B[i-1, 'PartialSum'] + B[i, 'n']
+    count <- count + 1
+    if (i == length(B$typeB)){
+      B[c((i-count):(i)), 'Sum'] <- B[i, 'PartialSum']
+      break
+    }
+  }else{
+    B[i, 'PartialSum'] <- B[i, 'n']
+    if (i-1-count > 0){
+      B[c((i-1-count):(i-1)), 'Sum'] <- B[i-1, 'PartialSum']
+    }else{
+      B[c((i-count):(i-1)), 'Sum'] <- B[i-1, 'PartialSum']
+    }
+    count <- 0
+  }
+}
+
+B$Fraction <- B$n/B$Sum
+
+# saving matrix/table A as a CSV file that will later be read into Julia for diversity calculations
+divout <- paste(dir,"CellBreakdown_PerClusterPerType_BCD-cluster_",date,".csv",sep="") 
+write.csv(B, file=divout)
+
+pdf(paste(dir, "FeaturePlot_CD120b_merged_", date, ".pdf",sep=""), width = 18, height = 12)
+fPlot <- FeaturePlot(TotalSeqCohortm, features = c("rna_TNFRSF1B"), reduction = "ref.umap", label.size = 3)
+print(fPlot)
+dev.off()
+
+pdf(paste(dir, "FeaturePlot_CD120b_merged-comparison_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("TNFRSF1B"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_TNFRSF1B"), reduction = "ref.umap", label.size = 3)
+pp <- p1 + p2 + plot_layout(guides = "collect")
+print(pp)
+dev.off()
 
 ##<--------------------------------------------------------
 
