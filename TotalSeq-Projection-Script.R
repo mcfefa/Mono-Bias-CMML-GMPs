@@ -625,7 +625,7 @@ fPlot <- FeaturePlot(TotalSeqCohortm, features = c("rna_TNFRSF1B"), reduction = 
 print(fPlot)
 dev.off()
 
-pdf(paste(dir, "FeaturePlot_CD120b_merged-comparison_", date, ".pdf",sep=""), width = 18, height = 6)
+pdf(paste(dir, "FeaturePlot_CD120b_merged-comparison_", date, ".pdf",sep=""), width = 9, height = 18)
 p1 <- FeaturePlot(reference, features = c("TNFRSF1B"), reduction = "umap.v2", label.size = 3)
 p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_TNFRSF1B"), reduction = "ref.umap", label.size = 3)
 pp <- p1 + p2 + plot_layout(guides = "collect")
