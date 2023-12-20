@@ -29,7 +29,8 @@ libraryPath <- "/home/ferrallm/Mono-Bias-CMML-GMPs/lib2"
 library('ggplot2', lib.loc=libraryPath)
 library('Seurat', lib.loc=libraryPath)
 library('patchwork', lib.loc=libraryPath)
-
+library('tidyverse', lib.loc=libraryPath)
+library('data.table', lib.loc=libraryPath)
 
 # remotes::install_github("satijalab/seurat-data", "seurat5", lib=libraryPath, quiet = TRUE)
 # remotes::install_github("satijalab/azimuth", "seurat5", lib=libraryPath, quiet = TRUE)
@@ -454,6 +455,99 @@ for (i in 2:length(TotalSeqCohort.batches)) {
 }
 
 saveRDS(TotalSeqCohort.batches, paste(dir,"Cohort-mapped-to-BCD-attempt2_",date,".rds",sep=""))
+
+## VISUALIZATION
+pdf(paste(dir, "DimPlot_predicted-clustering_", date, ".pdf",sep=""), width = 18, height = 12)
+p1 <- DimPlot(reference, reduction = 'umap.v2', group.by = 'clusterResolution_0.05', label.size = 3)
+p2 <- DimPlot(TotalSeqCohort.batches[[1]], reduction = 'ref.umap', group.by = 'predicted.predicted_cluster', label.size = 3)
+p3 <- DimPlot(TotalSeqCohort.batches[[2]], reduction = 'ref.umap', group.by = 'predicted.predicted_cluster', label.size = 3)
+p4 <- DimPlot(TotalSeqCohort.batches[[3]], reduction = 'ref.umap', group.by = 'predicted.predicted_cluster', label.size = 3)
+p5 <- DimPlot(TotalSeqCohort.batches[[4]], reduction = 'ref.umap', group.by = 'predicted.predicted_cluster', label.size = 3)
+p6 <- DimPlot(TotalSeqCohort.batches[[5]], reduction = 'ref.umap', group.by = 'predicted.predicted_cluster', label.size = 3)
+p7 <- DimPlot(TotalSeqCohort.batches[[6]], reduction = 'ref.umap', group.by = 'predicted.predicted_cluster', label.size = 3)
+p8 <- DimPlot(TotalSeqCohort.batches[[7]], reduction = 'ref.umap', group.by = 'predicted.predicted_cluster', label.size = 3)
+p9 <- DimPlot(TotalSeqCohort.batches[[8]], reduction = 'ref.umap', group.by = 'predicted.predicted_cluster', label.size = 3)
+p10 <- DimPlot(TotalSeqCohort.batches[[9]], reduction = 'ref.umap', group.by = 'predicted.predicted_cluster', label.size = 3)
+p11 <- DimPlot(TotalSeqCohort.batches[[10]], reduction = 'ref.umap', group.by = 'predicted.predicted_cluster', label.size = 3)
+pTotal <- p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9 + p10 + p11 + plot_layout(guides = "collect")
+print(pTotal)
+dev.off()
+
+## re-merge batches
+TotalSeqCohortm <- merge(TotalSeqCohort.batches[[1]], TotalSeqCohort.batches[2:length(TotalSeqCohort.batches)], merge.dr = "ref.umap")
+saveRDS(TotalSeqCohortm, paste(dir,"Cohort-mapped-to-BCD-attempt2-merged_",date,".rds",sep=""))
+
+pdf(paste(dir, "DimPlot_predicted-clustering_merged_", date, ".pdf",sep=""), width = 18, height = 12)
+dPlot <- DimPlot(TotalSeqCohortm, reduction = "ref.umap", group.by =  "predicted.predicted_cluster", label = TRUE, repel = TRUE, label.size = 3) + NoLegend()
+print(dPlot)
+dev.off()
+
+## exporting cluster composition to csv
+file1 <- paste(dir,"outputDataNames_",date,".csv",sep="")
+file2 <- paste(dir,"outputData_",date,".csv",sep="")
+
+# save the cluster identity for each individual cell --- this is the predicted_cluster based on BCD clustering
+cat(TotalSeqCohortm@meta.data$predicted.predicted_cluster, file=file2, sep=",\n")
+
+# save the orig.ident per cell (this is the totalseq patient name)
+listNames <- TotalSeqCohortm@meta.data$orig.ident
+write.table(data.frame(listNames),
+            row.names = FALSE,
+            col.names = FALSE, 
+            file = file1,
+            sep = ",")
+
+# merging the two files together in grouping to ultimately write out the number of cells per identity per cluster 
+#(so in this case, we'd end up with A being a table that has 5 samples x number of cluster idenfied number of rows and two columns )
+mydat1 <- read.csv(file2)
+mydat2 <- read.csv(file1)
+fulldat <- cbind(mydat2[1],mydat1[1])
+fulltab <- as.data.table(fulldat)
+
+# name table columns
+names(fulltab)[1] <- paste("patient")
+names(fulltab)[2] <- paste("cluster")
+
+# group data based on clusters
+group_by(fulltab, cluster)
+
+# create a table counting unqiue UMIs/cells per cluster
+tabPerClus <- fulltab %>% group_by(cluster) %>% count()
+type <- sub("\\_.*","",fulltab$patient)
+fulltab <- cbind(fulltab, type)
+A <- fulltab %>% group_by(cluster) %>% count(type)
+
+#Order A and sum same components
+A <- A[order(A$type),]
+count <- 0
+for (i in 1:length(A$type)){
+  if ( i == 1){
+    A[i,'PartialSum'] <- A[i,'n']
+    count <- count+1
+  }else if (A[i, 'type'] %in% A[i-1, 'type']){
+    A[i, 'PartialSum'] <- A[i-1, 'PartialSum'] + A[i, 'n']
+    count <- count + 1
+    if (i == length(A$type)){
+      A[c((i-count):(i)), 'Sum'] <- A[i, 'PartialSum']
+      break
+    }
+  }else{
+    A[i, 'PartialSum'] <- A[i, 'n']
+    if (i-1-count > 0){
+      A[c((i-1-count):(i-1)), 'Sum'] <- A[i-1, 'PartialSum']
+    }else{
+      A[c((i-count):(i-1)), 'Sum'] <- A[i-1, 'PartialSum']
+    }
+    count <- 0
+  }
+}
+
+A$Fraction <- A$n/A$Sum
+
+# saving matrix/table A as a CSV file that will later be read into Julia for diversity calculations
+divout <- paste(dir,"CellBreakdown_PerClusterPerType_predicted-cluster_",date,".csv",sep="") 
+write.csv(A, file=divout)
+
 
 ##<--------------------------------------------------------
 
