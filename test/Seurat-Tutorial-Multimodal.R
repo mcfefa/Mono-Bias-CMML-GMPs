@@ -141,6 +141,11 @@ p1 <- DimPlot(hcabm40k.batches[[1]], reduction = 'ref.umap', group.by = 'predict
 p2 <- DimPlot(hcabm40k.batches[[2]], reduction = 'ref.umap', group.by = 'predicted.celltype', label.size = 3)
 p1 + p2 + plot_layout(guides = "collect")
 
+## comparing reference with the first sample projections
+p1 <- DimPlot(bm, reduction = 'wnn.umap', group.by = 'celltype.l2', label.size = 3)
+p2 <- DimPlot(hcabm40k.batches[[1]], reduction = 'ref.umap', group.by = 'predicted.celltype', label.size = 3)
+p1 + p2 + plot_layout(guides = "collect")
+
 # Merge the batches 
 hcabm40k <- merge(hcabm40k.batches[[1]], hcabm40k.batches[2:length(hcabm40k.batches)], merge.dr = "ref.umap")
 DimPlot(hcabm40k, reduction = "ref.umap", group.by =  "predicted.celltype", label = TRUE, repel = TRUE, label.size = 3) + NoLegend()

@@ -436,6 +436,11 @@ TotalSeqCohort.batches[[1]] <- MapQuery(
   reduction.model = "umap.v2"
 )
 
+## test visualization --- reference vs predicted
+p1 <- DimPlot(reference, reduction = 'umap.v2', group.by = 'clusterResolution_0.05', label.size = 3)
+p2 <- DimPlot(TotalSeqCohort.batches[[1]], reduction = 'ref.umap', group.by = 'predicted.predicted_cluster', label.size = 3)
+p1 + p2 + plot_layout(guides = "collect")
+
 for (i in 2:length(TotalSeqCohort.batches)) {
   TotalSeqCohort.batches[[i]] <- MapQuery(
     anchorset = anchors[[i]], 
