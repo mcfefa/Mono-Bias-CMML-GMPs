@@ -23,22 +23,22 @@ setwd("~/Mono-Bias-CMML-GMPs")
 libraryPath <- "/home/ferrallm/Mono-Bias-CMML-GMPs/lib2"
 
 ## installing Seurat packages
-remotes::install_github("mojaveazure/seurat-object", "seurat5", lib=libraryPath)
-remotes::install_github("satijalab/seurat", "seurat5", lib=libraryPath, quiet = TRUE)
+# remotes::install_github("mojaveazure/seurat-object", "seurat5", lib=libraryPath)
+# remotes::install_github("satijalab/seurat", "seurat5", lib=libraryPath, quiet = TRUE)
 
 library('ggplot2', lib.loc=libraryPath)
 library('Seurat', lib.loc=libraryPath)
 library('patchwork', lib.loc=libraryPath)
 
 
-remotes::install_github("satijalab/seurat-data", "seurat5", lib=libraryPath, quiet = TRUE)
-remotes::install_github("satijalab/azimuth", "seurat5", lib=libraryPath, quiet = TRUE)
-remotes::install_github("satijalab/seurat-wrappers", "seurat5", lib=libraryPath, quiet = TRUE)
-remotes::install_github("stuart-lab/signac", "seurat5", lib=libraryPath, quiet = TRUE)
+# remotes::install_github("satijalab/seurat-data", "seurat5", lib=libraryPath, quiet = TRUE)
+# remotes::install_github("satijalab/azimuth", "seurat5", lib=libraryPath, quiet = TRUE)
+# remotes::install_github("satijalab/seurat-wrappers", "seurat5", lib=libraryPath, quiet = TRUE)
+# remotes::install_github("stuart-lab/signac", "seurat5", lib=libraryPath, quiet = TRUE)
 
 ## output strings and directories
 dir <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-"
-date <- "2023-12-19"
+date <- "2023-12-20"
 
 
 ##################################################################
@@ -404,18 +404,20 @@ reference <- FindNeighbors(
 )
 
 ## Find Anchors
-anchors <- list()
-for (i in 1:length(TotalSeqCohort.batches)) {
-  anchors[[i]] <- FindTransferAnchors(
-    reference = reference,
-    query = TotalSeqCohort.batches[[i]],
-    k.filter = NA,
-    reference.reduction = "pca", 
-    reference.neighbors = "spca.annoy.neighbors", 
-    dims = 1:50
-  )
-}
-saveRDS(anchors, paste(dir,"Anchors-for-BCD_Individual-Batches_",date,".rds",sep=""))
+# anchors <- list()
+# for (i in 1:length(TotalSeqCohort.batches)) {
+#   anchors[[i]] <- FindTransferAnchors(
+#     reference = reference,
+#     query = TotalSeqCohort.batches[[i]],
+#     k.filter = NA,
+#     reference.reduction = "pca", 
+#     reference.neighbors = "spca.annoy.neighbors", 
+#     dims = 1:50
+#   )
+# }
+# saveRDS(anchors, paste(dir,"Anchors-for-BCD_Individual-Batches_",date,".rds",sep=""))
+anchorfile <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-Anchors-for-BCD_Individual-Batches_2023-12-19.rds"
+anchors <- readRDS(anchorfile)
 
 ## Individual Mapping
 ##   running/troubleshooting with firrst sample and then will loop through remainder of batches
@@ -424,15 +426,15 @@ saveRDS(anchors, paste(dir,"Anchors-for-BCD_Individual-Batches_",date,".rds",sep
 reference <- RunUMAP(reference, dims=1:50, reduction.name = "umap.v2", reduction.key = "UMAPv2_", return.model = TRUE)
 DimPlot(reference, group.by = "clusterResolution_0.05", reduction = "umap.v2") 
 
-  TotalSeqCohort.batches[[1]] <- MapQuery(
-    anchorset = anchors[[1]], 
-    query = TotalSeqCohort.batches[[1]],
-    reference = reference, 
-    refdata = list(
-      predicted_cluster = "clusterResolution_0.05"),
-    reference.reduction = "pca",
-    reduction.model = "umap.v2"
-  )
+TotalSeqCohort.batches[[1]] <- MapQuery(
+  anchorset = anchors[[1]], 
+  query = TotalSeqCohort.batches[[1]],
+  reference = reference, 
+  refdata = list(
+    predicted_cluster = "clusterResolution_0.05"),
+  reference.reduction = "pca",
+  reduction.model = "umap.v2"
+)
 
 for (i in 2:length(TotalSeqCohort.batches)) {
   TotalSeqCohort.batches[[i]] <- MapQuery(
@@ -442,7 +444,7 @@ for (i in 2:length(TotalSeqCohort.batches)) {
     refdata = list(
       predicted_cluster = "clusterResolution_0.05"),
     reference.reduction = "pca",
-    reduction.model = "umap"
+    reduction.model = "umap.v2"
   )
 }
 
