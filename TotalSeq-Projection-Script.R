@@ -855,10 +855,11 @@ print(pp)
 dev.off()
 
 ### LINEAGE COCKTAIL (CAT LOG NUMBER IN SUPP TABLE 11 OF BCD)
+### https://www.biolegend.com/de-de/search-results/fitc-anti-human-lineage-cocktail-cd3-cd14-cd16-cd19-cd20-cd56-6689
 ## CD3
 pdf(paste(dir, "FeaturePlot_CD3_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
-p1 <- FeaturePlot(reference, features = c("CD3"), reduction = "umap.v2", label.size = 3)
-p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_CD3"), reduction = "ref.umap", label.size = 3)
+p1 <- FeaturePlot(reference, features = c("CD3E"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_CD3E"), reduction = "ref.umap", label.size = 3)
 p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD3"), reduction = 'ref.umap', max.cutoff = 3)
 pp <- p1 | p2 | p3 
 print(pp)
@@ -866,10 +867,10 @@ dev.off()
 
 ## CD14
 
-## CD16
-pdf(paste(dir, "FeaturePlot_CD16_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
-p1 <- FeaturePlot(reference, features = c("CD16"), reduction = "umap.v2", label.size = 3)
-p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_CD16"), reduction = "ref.umap", label.size = 3)
+## CD16 == FCGR3A
+pdf(paste(dir, "FeaturePlot_CD16-FCGR3A_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("FCGR3A"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_FCGR3A"), reduction = "ref.umap", label.size = 3)
 p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD16"), reduction = 'ref.umap', max.cutoff = 3)
 pp <- p1 | p2 | p3 
 print(pp)
@@ -884,10 +885,10 @@ pp <- p1 | p2 | p3
 print(pp)
 dev.off()
 
-## CD20
-pdf(paste(dir, "FeaturePlot_CD20_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
-p1 <- FeaturePlot(reference, features = c("CD20"), reduction = "umap.v2", label.size = 3)
-p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_CD20"), reduction = "ref.umap", label.size = 3)
+## CD20 == MS4A1
+pdf(paste(dir, "FeaturePlot_CD20-MS4A1_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("MS4A1"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_MS4A1"), reduction = "ref.umap", label.size = 3)
 p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD20"), reduction = 'ref.umap', max.cutoff = 3)
 pp <- p1 | p2 | p3 
 print(pp)
