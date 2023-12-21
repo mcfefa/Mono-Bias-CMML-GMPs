@@ -39,7 +39,7 @@ library('data.table', lib.loc=libraryPath)
 
 ## output strings and directories
 dir <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-"
-date <- "2023-12-20"
+date <- "2023-12-21"
 
 
 ##################################################################
@@ -635,12 +635,68 @@ dev.off()
 ##<--------------------------------------------------------
 
 ##################################################################
+## VISUALIZATION OF ADT INFORMATION
 ##################################################################
-## 
-##################################################################
 
+## Marker identified from COMET analysis with TotalSeq Panel B ADT
+##    CD14, ITGAM, FCGR2A, FCGR1A, CD48, CD36
 
+## list of antibodies
+rownames(TotalSeqCohortm[["ADT"]])
+# [1] "anti-human-CD86"             "anti-human-CD274"            "anti-human-CD270"            "anti-human-CD155"           
+# [5] "anti-human-CD112"            "anti-human-CD47"             "anti-human-CD48"             "anti-human-CD40"            
+# [9] "anti-human-CD154"            "anti-human-CD52"             "anti-human-CD3"              "anti-human-CD8"             
+# [13] "anti-human-CD56"             "anti-human-CD19"             "anti-human-CD33"             "anti-human-CD11c"           
+# [17] "anti-human-HLA-ABC"          "anti-human-CD45RA"           "anti-human-CD123"            "anti-human-CD7"             
+# [21] "anti-human-CD105"            "anti-human-mouse-CD49f"      "anti-human-CD194"            "anti-human-CD4"             
+# [25] "anti-mouse-human-CD44"       "anti-human-CD14"             "anti-human-CD16"             "anti-human-CD25"            
+# [29] "anti-human-CD45RO"           "anti-human-CD279"            "anti-human-TIGIT"            "Mouse-IgG1"                 
+# [33] "Mouse-IgG2a"                 "Mouse-IgG2b"                 "Rat-IgG2b"                   "anti-human-CD20"            
+# [37] "anti-human-CD335"            "anti-human-CD31"             "anti-Human-Podoplanin"       "anti-human-CD146"           
+# [41] "anti-human-IgM"              "anti-human-CD5"              "anti-human-CD195"            "anti-human-CD32"            
+# [45] "anti-human-CD196"            "anti-human-CD185"            "anti-human-CD103"            "anti-human-CD69"            
+# [49] "anti-human-CD62L"            "anti-human-CD161"            "anti-human-CD152"            "anti-human-CD223"           
+# [53] "anti-human-KLRG1"            "anti-human-CD27"             "anti-human-CD107a"           "anti-human-CD95"            
+# [57] "anti-human-CD134"            "anti-human-HLA-DR"           "anti-human-CD1c"             "anti-human-CD11b"           
+# [61] "anti-human-CD64"             "anti-human-CD141"            "anti-human-CD1d"             "anti-human-CD314"           
+# [65] "anti-human-CD35"             "anti-human-CD57-Recombinant" "anti-human-CD272"            "anti-human-mouse-rat"       
+# [69] "anti-human-CD58"             "anti-human-CD39"             "anti-human-CX3CR1"           "anti-human-CD24"            
+# [73] "anti-human-CD21"             "anti-human-CD11a"            "anti-human-CD79b"            "anti-human-CD244"           
+# [77] "anti-human-CD169"            "anti-human-mouse"            "anti-human-CD268"            "anti-human-CD42b"           
+# [81] "anti-human-CD54"             "anti-human-CD62P"            "anti-human-CD119"            "anti-human-TCR"             
+# [85] "Rat-IgG1"                    "Rat-IgG2a"                   "anti-human-CD192"            "anti-human-CD122"           
+# [89] "anti-human-Fc?RI?"           "anti-human-CD41"             "anti-human-CD137"            "anti-human-CD163"           
+# [93] "anti-human-CD83"             "anti-human-CD124"            "anti-human-CD13"             "anti-human-CD2"             
+# [97] "anti-human-CD226"            "anti-human-CD29"             "anti-human-CD303"            "anti-human-CD49b"           
+# [101] "anti-human-CD81"             "anti-human-IgD"              "anti-human-CD18"             "anti-human-CD28"            
+# [105] "anti-human-CD38"             "anti-human-CD127"            "anti-human-CD45"             "anti-human-CD22"            
+# [109] "anti-human-CD71"             "anti-human-CD26"             "anti-human-CD115"            "anti-human-CD63"            
+# [113] "anti-human-CD304"            "anti-human-CD36"             "anti-human-CD172a"           "anti-human-CD72"            
+# [117] "anti-human-CD158"            "anti-human-CD93"             "anti-human-CD49a"            "anti-human-CD49d"           
+# [121] "anti-human-CD73"             "anti-human-CD9"              "anti-human-TCR.1"            "anti-human-TCR.2"           
+# [125] "anti-human-LOX-1"            "anti-human-CD158b"           "anti-human-CD158e1"          "anti-human-CD142"           
+# [129] "anti-human-CD319"            "anti-human-CD352"            "anti-human-CD94"             "anti-human-CD162"           
+# [133] "anti-human-CD85j"            "anti-human-CD23"             "anti-human-CD328"            "anti-human-HLA-E"           
+# [137] "anti-human-CD82"             "anti-human-CD101"            "anti-human-CD88"             "anti-human-CD224" 
 
+## seems like ADT data needs some processing
+TotalSeqCohortm <- NormalizeData(TotalSeqCohortm, normalization.method="CLR", margin=2, assay="ADT")
 
+## CD120b
+pdf(paste(dir, "FeaturePlot_CD120b_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("TNFRSF1B"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_TNFRSF1B"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD120b"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
 
+## CD120b
+pdf(paste(dir, "FeaturePlot_CD14_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("CD14"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_CD14"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD120b"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
 
