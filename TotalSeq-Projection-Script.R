@@ -632,8 +632,6 @@ pp <- p1 + p2 + plot_layout(guides = "collect")
 print(pp)
 dev.off()
 
-##<--------------------------------------------------------
-
 ##################################################################
 ## VISUALIZATION OF ADT INFORMATION
 ##################################################################
@@ -681,6 +679,7 @@ rownames(TotalSeqCohortm[["ADT"]])
 
 ## seems like ADT data needs some processing
 TotalSeqCohortm <- NormalizeData(TotalSeqCohortm, normalization.method="CLR", margin=2, assay="ADT")
+saveRDS(TotalSeqCohortm, paste(dir,"Cohort-mapped-to-BCD-attempt2-merged-postADTprocessing_",date,".rds",sep=""))
 
 ## CD120b
 pdf(paste(dir, "FeaturePlot_CD120b_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
@@ -691,12 +690,39 @@ pp <- p1 | p2 | p3
 print(pp)
 dev.off()
 
-## CD120b
+## CD14
 pdf(paste(dir, "FeaturePlot_CD14_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
 p1 <- FeaturePlot(reference, features = c("CD14"), reduction = "umap.v2", label.size = 3)
 p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_CD14"), reduction = "ref.umap", label.size = 3)
-p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD120b"), reduction = 'ref.umap', max.cutoff = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD14"), reduction = 'ref.umap', max.cutoff = 3)
 pp <- p1 | p2 | p3 
 print(pp)
 dev.off()
+
+## CD48
+pdf(paste(dir, "FeaturePlot_CD48_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("CD48"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_CD48"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD48"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## CD36
+pdf(paste(dir, "FeaturePlot_CD36_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("CD36"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_CD36"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD36"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+##<--------------------------------------------------------
+
+
+
+
+
+
+
 
