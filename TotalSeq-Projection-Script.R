@@ -638,6 +638,8 @@ dev.off()
 
 ## Marker identified from COMET analysis with TotalSeq Panel B ADT
 ##    CD14, ITGAM, FCGR2A, FCGR1A, CD48, CD36
+## 
+##    search alternative gene names: https://www.ncbi.nlm.nih.gov/gene/
 
 ## list of antibodies
 rownames(TotalSeqCohortm[["ADT"]])
@@ -717,12 +719,104 @@ pp <- p1 | p2 | p3
 print(pp)
 dev.off()
 
+## CD52
+pdf(paste(dir, "FeaturePlot_CD52_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("CD52"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_CD52"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD52"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## ITGAM == CD11b
+pdf(paste(dir, "FeaturePlot_ITGAM-CD11b_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("ITGAM"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_ITGAM"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD11b"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## FCGR2A == CD32
+pdf(paste(dir, "FeaturePlot_FCGR2A-CD32_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("FCGR2A"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_FCGR2A"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD32"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## FCGR1A == CD64
+pdf(paste(dir, "FeaturePlot_FCGR1A-CD64_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("FCGR1A"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_FCGR1A"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD64"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## PTPRC == CD45
+pdf(paste(dir, "FeaturePlot_PTPRC-CD45_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("PTPRC"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_PTPRC"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD45"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## HLA-E
+pdf(paste(dir, "FeaturePlot_HLA-E_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("HLA-E"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_HLA-E"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-HLA-E"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## PECAM1 == CD31
+pdf(paste(dir, "FeaturePlot_PECAM1-CD31_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("PECAM1"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_PECAM1"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD31"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## TNFRSF14 == CD270
+pdf(paste(dir, "FeaturePlot_TNFRSF14-CD270_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("TNFRSF14"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_TNFRSF14"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD270"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## ENTPD1 == CD39
+pdf(paste(dir, "FeaturePlot_ENTPD1-CD39_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("ENTPD1"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_ENTPD1"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD39"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## CD1d
+pdf(paste(dir, "FeaturePlot_CD1d_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("CD1D"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_CD1D"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD1d"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## CD63
+pdf(paste(dir, "FeaturePlot_CD63_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("CD63"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_CD63"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD63"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+
 ##<--------------------------------------------------------
-
-
-
-
-
-
-
-
