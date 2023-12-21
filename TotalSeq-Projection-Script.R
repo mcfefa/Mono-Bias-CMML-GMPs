@@ -818,5 +818,81 @@ pp <- p1 | p2 | p3
 print(pp)
 dev.off()
 
+## CD56 == NCAM1
+pdf(paste(dir, "FeaturePlot_NCAM1-CD56_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("NCAM1"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_NCAM1"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD56"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## CD38
+pdf(paste(dir, "FeaturePlot_CD38_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("CD38"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_CD38"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD38"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## PANX1
+pdf(paste(dir, "FeaturePlot_PANX1_ref-v-rna_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("PANX1"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_PANX1"), reduction = "ref.umap", label.size = 3)
+#p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD38"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 #| p3 
+print(pp)
+dev.off()
+
+## PANX2
+pdf(paste(dir, "FeaturePlot_PANX2_ref-v-rna_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("PANX2"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_PANX2"), reduction = "ref.umap", label.size = 3)
+#p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD38"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 #| p3 
+print(pp)
+dev.off()
+
+### LINEAGE COCKTAIL (CAT LOG NUMBER IN SUPP TABLE 11 OF BCD)
+## CD3
+pdf(paste(dir, "FeaturePlot_CD3_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("CD3"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_CD3"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD3"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## CD14
+
+## CD16
+pdf(paste(dir, "FeaturePlot_CD16_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("CD16"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_CD16"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD16"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## CD19
+pdf(paste(dir, "FeaturePlot_CD19_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("CD19"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_CD19"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD19"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## CD20
+pdf(paste(dir, "FeaturePlot_CD20_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("CD20"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_CD20"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-human-CD20"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
+## CD56
 
 ##<--------------------------------------------------------
