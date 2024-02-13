@@ -43,7 +43,7 @@ savedir <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/pSTAT5/pSTA
 enddir <-"Unprocessed-RDS_2024-02-13.rds"
 
 ##### SAMPLE 1
-P1file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4563-Padron/2-C-001_unstimulated/outs/filtered_feature_bc_matrix/"
+P1file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4563-Padron/2-C-001_unstimulated/outs/per_sample_outs/2-C-001_unstimulated/count/sample_filtered_feature_bc_matrix"
 
 P1.counts <- Read10X(data.dir=P1file)
 P1.rna <- P1.counts$`Gene Expression`
@@ -55,7 +55,8 @@ all.equal(colnames(P1.rna), colnames(P1.adt))
 P1 <- CreateSeuratObject(counts=P1.rna, project="2C001unstim")
 
 # create a new assay to store ADT information
-P1_adt_assay <- CreateAssay5Object(counts = P1.adt)
+# P1_adt_assay <- CreateAssay5Object(counts = P1.adt) <--- errored this time, unclear why
+P1_adt_assay <- CreateAssayObject(counts=P1.adt)
 
 # add this assay to the previously created Seurat object
 P1[["ADT"]] <- P1_adt_assay
