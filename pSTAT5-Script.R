@@ -124,6 +124,10 @@ saveRDS(TotalSeqCohort, paste(savedir,"Unprocessed-Merged",enddir,sep=""))
 
 ######## Get Summary of nFeature RNA Distribution
 summary(TotalSeqCohort@meta.data$nFeature_RNA)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 11.0   240.0   389.0   440.1   565.0  3185.0 
+
+######## CMML TotalSeq Stats
 #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 #   47    2511    3707    3698    4871   10798 
 
@@ -156,18 +160,19 @@ dev.off()
 
 ## original dataset dimensions
 dim(TotalSeqCohort)
-# [1]  36601 101828
+# [1] 18082 34429
 
 ## filtered based on approach
 dim(subset(TotalSeqCohort, subset = nFeature_RNA > nFeatLower_CMML & nFeature_RNA < nFeatUpper_CMML & percent.mito < perMitoUpper_CMML))
-# [1] 36601 92415
+# [1] 18082 12356
 
 ## filtered based on strict number values from BCD
 dim(subset(TotalSeqCohort, subset = nFeature_RNA > nFeatLower_CMML & nFeature_RNA < 5808.62 & percent.mito < perMitoUpper_CMML))
-# [1] 36601 82922
+# [1] 18082 13870
 
 ######## Filter Cohort based on cutoffs
-TotalSeqCohort <- subset(TotalSeqCohort, subset = nFeature_RNA > nFeatLower_CMML & nFeature_RNA < nFeatUpper_CMML & percent.mito < perMitoUpper_CMML)
+### decided just to filter based on mitochondrial content because otherwise losing over half of the data and there doesn't look to be a ton of outlying cells
+TotalSeqCohort <- subset(TotalSeqCohort, subset = percent.mito < perMitoUpper_CMML)
 saveRDS(TotalSeqCohort, paste(dir,"Cohort-PostFiltering_",date,".rds",sep=""))
 
 ######## Normalizing data
