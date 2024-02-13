@@ -299,7 +299,7 @@ for (i in 1:length(TotalSeqCohort.batches)) {
   )
 }
 saveRDS(anchors, paste(dir,"Anchors-for-BCD_Individual-Batches_",date,".rds",sep=""))
-#<---------
+
 # anchorfile <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-Anchors-for-BCD_Individual-Batches_2023-12-19.rds"
 # anchors <- readRDS(anchorfile)
 
@@ -309,11 +309,20 @@ saveRDS(anchors, paste(dir,"Anchors-for-BCD_Individual-Batches_",date,".rds",sep
 
 reference <- RunUMAP(reference, dims=1:50, reduction.name = "umap.v2", reduction.key = "UMAPv2_", return.model = TRUE)
 
-##
-##
-saveRDS(reference, paste(dir,"Reference-BCD-Update_Individual-Batches_",date,".rds",sep=""))
+## adding in BCD UMAP and clusters explicitly as meta-data so can hopefully visualize using these in the future
+##    can also predict clusters from this meta data and confirm assignment
+BCDumapfile <- "/blue/ferrallm/00_data/single-cell/CMML/BCD/BCD-UMAP-Embeddings_2020-03-31.csv"
+BCD.embeddings <- read.csv(BCDumapfile)
+reference[['BCD-UMAP-1']] <- BCD.embeddings$UMAP_1[match(rownames(reference@meta.data),BCD.embeddings$X)]
+reference[['BCD-UMAP-2']] <- BCD.embeddings$UMAP_2[match(rownames(reference@meta.data),BCD.embeddings$X)]
 
+BCDclustersfile <- "/blue/ferrallm/00_data/single-cell/CMML/BCD/BCD-UMAP-Clusters_2020-03-31.csv"
+BCD.clusters <- read.csv(BCDclustersfile)
+reference[['BCD-Clusters']] <- BCD.embeddings$RNA_snn_res.0.05[match(rownames(reference@meta.data),BCD.embeddings$X)]
 
+saveRDS(reference, paste(dir,"Reference-BCD-Updated-UMAPv2+origEmbed_",date,".rds",sep=""))
+
+#<---------
 DimPlot(reference, group.by = "clusterResolution_0.05", reduction = "umap.v2") 
 
 TotalSeqCohort.batches[[1]] <- MapQuery(
