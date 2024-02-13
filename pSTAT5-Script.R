@@ -267,42 +267,9 @@ saveRDS(TotalSeqCohort, paste(dir,"Cohort-PostPCA_",date,".rds",sep=""))
 reffile <- "/blue/ferrallm/00_data/single-cell/CMML/BCD/allSeurat_39+8_postStandardPipeline_withHarmony_withSeuratGeneScores_05-20-2021_withWNT-2022-04-26.rds"
 reference <- readRDS(reffile)
 
-## Load TotalSeq Cohort Seurat Object (R crashed -- ran out of memory, prev limit 48GB, expanded)
-totalseqfile <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-Cohort-PostPCA_2023-12-15.rds"
-TotalSeqCohort <- readRDS(totalseqfile)
-
-## Find Anchors --- all in one ---- ORIGINAL ATTEMPT
-# anchorsfile <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-Anchors-for-BCD_LogNorm-PCA_2023-12-15.rds"
-# anchors <- readRDS(anchorsfile)
-
-# anchors <- FindTransferAnchors(
-#   reference = reference,
-#   query = TotalSeqCohort,
-#   normalization.method = "LogNormalize",
-#   reference.reduction = "pca",
-#   dims = 1:50
-# )
-# saveRDS(anchors, paste(dir,"Anchors-for-BCD_LogNorm-PCA_",date,".rds",sep=""))
-
-
-## Map onto Reference
-##### running into memory issues at this Mapping step, attempting with 512GB mem (prev fail at 256GB) --- still fails
-##### going to break up individual samples and map on to the reference and see how that goes
-# 
-# TotalSeqCohort <- MapQuery(
-#   anchorset = anchors,
-#   query = TotalSeqCohort,
-#   reference = reference,
-#   refdata = list(
-#     predicted_cluster = "clusterResolution_0.05",
-#     predicted_Wu_GMP = "wu_GMP",
-#     predicted_Wu_HSC = "wu_HSC",
-#     predicted_Wu_MEP = "wu_MEP"
-#   ),
-#   reference.reduction = "pca", 
-#   reduction.model = "umap"
-# )
-# saveRDS(TotalSeqCohort, paste(dir,"Cohort-mapped-to-BCD-attempt1_",date,".rds",sep=""))
+## Load TotalSeq Cohort Seurat Object 
+# totalseqfile <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/pSTAT5/pSTAT5-TotalSeq-Pilot-Cohort-PostPCA_2024-02-13.rds"
+# TotalSeqCohort <- readRDS(totalseqfile)
 
 ## BATCHING SAMPLES AND THEN FIND ANCHORS AND MAP
 TotalSeqCohort.batches <- SplitObject(TotalSeqCohort, split.by = "orig.ident")
@@ -320,26 +287,33 @@ reference <- FindNeighbors(
 )
 
 ## Find Anchors
-# anchors <- list()
-# for (i in 1:length(TotalSeqCohort.batches)) {
-#   anchors[[i]] <- FindTransferAnchors(
-#     reference = reference,
-#     query = TotalSeqCohort.batches[[i]],
-#     k.filter = NA,
-#     reference.reduction = "pca", 
-#     reference.neighbors = "spca.annoy.neighbors", 
-#     dims = 1:50
-#   )
-# }
-# saveRDS(anchors, paste(dir,"Anchors-for-BCD_Individual-Batches_",date,".rds",sep=""))
-anchorfile <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-Anchors-for-BCD_Individual-Batches_2023-12-19.rds"
-anchors <- readRDS(anchorfile)
+anchors <- list()
+for (i in 1:length(TotalSeqCohort.batches)) {
+  anchors[[i]] <- FindTransferAnchors(
+    reference = reference,
+    query = TotalSeqCohort.batches[[i]],
+    k.filter = NA,
+    reference.reduction = "pca",
+    reference.neighbors = "spca.annoy.neighbors",
+    dims = 1:50
+  )
+}
+saveRDS(anchors, paste(dir,"Anchors-for-BCD_Individual-Batches_",date,".rds",sep=""))
+#<---------
+# anchorfile <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/CMML-TotalSeq-Anchors-for-BCD_Individual-Batches_2023-12-19.rds"
+# anchors <- readRDS(anchorfile)
 
 ## Individual Mapping
 ##   running/troubleshooting with firrst sample and then will loop through remainder of batches
 ##   also slimmed down to just repredicting clustering -- re-doing for a wnn.umap to align with tutorial
 
 reference <- RunUMAP(reference, dims=1:50, reduction.name = "umap.v2", reduction.key = "UMAPv2_", return.model = TRUE)
+
+##
+##
+saveRDS(reference, paste(dir,"Reference-BCD-Update_Individual-Batches_",date,".rds",sep=""))
+
+
 DimPlot(reference, group.by = "clusterResolution_0.05", reduction = "umap.v2") 
 
 TotalSeqCohort.batches[[1]] <- MapQuery(
