@@ -71,7 +71,7 @@ P1 <- RenameCells(object=P1, add.cell.id="2C001unstim")
 saveRDS(P1, paste(savedir,"2-C-001-unstimulated",enddir,sep=""))
 
 ####### SAMPLE 2
-P2file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4563-Padron/2-C-001_GM-CSF/outs/filtered_feature_bc_matrix/"
+P2file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4563-Padron/2-C-001_GM-CSF/outs/per_sample_outs/2-C-001_GM-CSF/count/sample_filtered_feature_bc_matrix"
 PtName <- "2C001stim"
 
 P2.counts <- Read10X(data.dir=P2file)
@@ -79,13 +79,13 @@ P2.rna <- P2.counts$`Gene Expression`
 P2.adt <- P2.counts$`Antibody Capture`
 
 P2 <- CreateSeuratObject(counts=P2.rna, project=PtName)
-P2_adt_assay <- CreateAssay5Object(counts = P2.adt)
+P2_adt_assay <- CreateAssayObject(counts = P2.adt)
 P2[["ADT"]] <- P2_adt_assay
 P2 <- RenameCells(object=P2, add.cell.id=PtName)
 saveRDS(P2, paste(savedir,"2-C-001-GMCSF-stimulated",enddir,sep=""))
 
 ####### SAMPLE 3
-P3file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4563-Padron/KB-14_unstimulated/outs/filtered_feature_bc_matrix/"
+P3file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4563-Padron/KB-14_unstimulated/outs/per_sample_outs/KB-14_unstimulated/count/sample_filtered_feature_bc_matrix"
 Pt3Name <- "KB14unstim"
 
 P3.counts <- Read10X(data.dir=P3file)
@@ -93,13 +93,13 @@ P3.rna <- P3.counts$`Gene Expression`
 P3.adt <- P3.counts$`Antibody Capture`
 
 P3 <- CreateSeuratObject(counts=P3.rna, project=Pt3Name)
-P3_adt_assay <- CreateAssay5Object(counts = P3.adt)
+P3_adt_assay <- CreateAssayObject(counts = P3.adt)
 P3[["ADT"]] <- P3_adt_assay
 P3 <- RenameCells(object=P3, add.cell.id=Pt3Name)
 saveRDS(P3, paste(savedir,"KB-14-unstimulated",enddir,sep=""))
 
 ####### SAMPLE 4
-P4file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4563-Padron/KB-14_GM-CSF/outs/filtered_feature_bc_matrix/"
+P4file <- "/blue/ferrallm/00_data/single-cell/CMML/Moffitt-CICPT-4563-Padron/KB-14_GM-CSF/outs/per_sample_outs/KB-14_GM-CSF/count/sample_filtered_feature_bc_matrix"
 Pt4Name <- "KB14stim"
 
 P4.counts <- Read10X(data.dir=P4file)
@@ -107,11 +107,10 @@ P4.rna <- P4.counts$`Gene Expression`
 P4.adt <- P4.counts$`Antibody Capture`
 
 P4 <- CreateSeuratObject(counts=P4.rna, project=Pt4Name)
-P4_adt_assay <- CreateAssay5Object(counts = P4.adt)
+P4_adt_assay <- CreateAssayObject(counts = P4.adt)
 P4[["ADT"]] <- P4_adt_assay
 P4 <- RenameCells(object=P4, add.cell.id=Pt4Name)
 saveRDS(P4, paste(savedir,"KB14-GMCSF-stimulated",enddir,sep=""))
-
 
 ####### MERGE SEURAT OBJECTS
 TotalSeqCohort <- merge(x=P1, y=list(P2,P3,P4), merge.data=TRUE, project="pSTAT5totalSeq")
