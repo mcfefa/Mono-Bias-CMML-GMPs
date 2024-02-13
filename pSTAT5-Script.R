@@ -318,11 +318,10 @@ reference[['BCD-UMAP-2']] <- BCD.embeddings$UMAP_2[match(rownames(reference@meta
 
 BCDclustersfile <- "/blue/ferrallm/00_data/single-cell/CMML/BCD/BCD-UMAP-Clusters_2020-03-31.csv"
 BCD.clusters <- read.csv(BCDclustersfile)
-reference[['BCD-Clusters']] <- BCD.embeddings$RNA_snn_res.0.05[match(rownames(reference@meta.data),BCD.embeddings$X)]
+reference[['BCD-Clusters']] <- BCD.clusters$RNA_snn_res.0.05[match(rownames(reference@meta.data),BCD.embeddings$X)]
 
 saveRDS(reference, paste(dir,"Reference-BCD-Updated-UMAPv2+origEmbed_",date,".rds",sep=""))
 
-#<---------
 DimPlot(reference, group.by = "clusterResolution_0.05", reduction = "umap.v2") 
 
 TotalSeqCohort.batches[[1]] <- MapQuery(
@@ -330,11 +329,15 @@ TotalSeqCohort.batches[[1]] <- MapQuery(
   query = TotalSeqCohort.batches[[1]],
   reference = reference, 
   refdata = list(
-    predicted_cluster = "clusterResolution_0.05"),
+    predicted_cluster = "clusterResolution_0.05",
+    predicted_BCD_UMAP1 = "BCD-UMAP-1",
+    predicted_BCD_UMAP2 = "BCD-UMAP-2",
+    predicted_BCD_Clusters = "BCD-Clusters"
+    ),
   reference.reduction = "pca",
   reduction.model = "umap.v2"
 )
-
+#<---------
 ## test visualization --- reference vs predicted
 p1 <- DimPlot(reference, reduction = 'umap.v2', group.by = 'clusterResolution_0.05', label.size = 3)
 p2 <- DimPlot(TotalSeqCohort.batches[[1]], reduction = 'ref.umap', group.by = 'predicted.predicted_cluster', label.size = 3)
