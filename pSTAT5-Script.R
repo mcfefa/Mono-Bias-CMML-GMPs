@@ -337,11 +337,25 @@ TotalSeqCohort.batches[[1]] <- MapQuery(
   reference.reduction = "pca",
   reduction.model = "umap.v2"
 )
-#<---------
+
 ## test visualization --- reference vs predicted
 p1 <- DimPlot(reference, reduction = 'umap.v2', group.by = 'clusterResolution_0.05', label.size = 3)
 p2 <- DimPlot(TotalSeqCohort.batches[[1]], reduction = 'ref.umap', group.by = 'predicted.predicted_cluster', label.size = 3)
 p1 + p2 + plot_layout(guides = "collect")
+
+DimPlot(reference, dim=c(refUMAP[,2],refUMAP[,3]), group.by = 'clusterResolution_0.05', label.size = 3)
+
+a <- reference$`BCD-UMAP-1`
+m <- matrix(unlist(a),byrow=TRUE,ncol=length(a[[1]]))
+rownames(m) <- names(a)
+as.data.frame(m)
+
+b <- reference$`BCD-UMAP-2`
+n <- matrix(unlist(b),byrow=TRUE,ncol=length(b[[1]]))
+rownames(n) <- names(b)
+as.data.frame(n)
+
+refUMAP <- merge(m,n,by="row.names",all=TRUE)
 
 for (i in 2:length(TotalSeqCohort.batches)) {
   TotalSeqCohort.batches[[i]] <- MapQuery(
@@ -357,6 +371,8 @@ for (i in 2:length(TotalSeqCohort.batches)) {
 
 saveRDS(TotalSeqCohort.batches, paste(dir,"Cohort-mapped-to-BCD-attempt2_",date,".rds",sep=""))
 
+date <- "2024-02-14"
+#<---------
 ## VISUALIZATION
 pdf(paste(dir, "DimPlot_predicted-clustering_", date, ".pdf",sep=""), width = 18, height = 12)
 p1 <- DimPlot(reference, reduction = 'umap.v2', group.by = 'clusterResolution_0.05', label.size = 3)
