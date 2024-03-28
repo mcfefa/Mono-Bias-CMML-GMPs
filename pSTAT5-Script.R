@@ -471,8 +471,6 @@ A$Fraction <- A$n/A$Sum
 divout <- paste(dir,"CellBreakdown_PerClusterPerType_predicted-cluster_",date,".csv",sep="") 
 write.csv(A, file=divout)
 
-#<---------
-
 ##################################################################
 ## VISUALIZATION OF ADT INFORMATION
 ##################################################################
@@ -537,5 +535,25 @@ p2 <- FeaturePlot(TotalSeqCohort.batches[[4]], features = c("adt_anti-STAT5"), r
 pp <- p1 | p2
 print(pp)
 dev.off()
+
+##################################################################
+## pSTAT5 ANALYSIS
+##################################################################
+
+reference <- readRDS("/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/pSTAT5/pSTAT5-TotalSeq-Pilot-Reference-BCD-Updated-UMAPv2+origEmbed_2024-02-13.rds") 
+TotalSeqCohortm <- readRDS("/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/pSTAT5/pSTAT5-TotalSeq-Pilot-Cohort-mapped-to-BCD-attempt2-merged_2024-02-15.rds") 
+
+TotalSeqCohortm <- NormalizeData(TotalSeqCohortm, normalization.method="CLR", margin=2, assay="ADT")
+saveRDS(TotalSeqCohortm, paste(dir,"Cohort-mapped-to-BCD-attempt2-merged-postADTprocessing_",date,".rds",sep=""))
+
+## pSTAT5
+pdf(paste(dir, "FeaturePlot_pSTA5_ref-v-rna-v-adt_", date, ".pdf",sep=""), width = 18, height = 6)
+p1 <- FeaturePlot(reference, features = c("STAT5A"), reduction = "umap.v2", label.size = 3)
+p2 <- FeaturePlot(TotalSeqCohortm, features = c("rna_STAT5A"), reduction = "ref.umap", label.size = 3)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-STAT5"), reduction = 'ref.umap', max.cutoff = 3)
+pp <- p1 | p2 | p3 
+print(pp)
+dev.off()
+
 
 ##<--------------------------------------------------------
