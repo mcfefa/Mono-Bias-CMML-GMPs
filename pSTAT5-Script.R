@@ -570,7 +570,7 @@ print(p4)
 dev.off()
 
 ### visualizing ADT based on sample -- VlnPlot
-pdf(paste(dir, "VlnPlot_pSTA5_adt_", date, ".pdf",sep=""), width = 6, height = 6)
+pdf(paste(dir, "VlnPlot_pSTA5_adt_bySample_", date, ".pdf",sep=""), width = 6, height = 6)
 p5 <- VlnPlot(TotalSeqCohortm, features = c("adt_anti-STAT5"))
 print(p5)
 dev.off()
@@ -586,6 +586,24 @@ pdf(paste(dir, "VlnPlot_pSTA5_adt_byBCDcluster_", date, ".pdf",sep=""), width = 
 p4 <- VlnPlot(TotalSeqCohortm, features = c("adt_anti-STAT5"), group.by = "predicted.predicted_cluster")
 print(p4)
 dev.off()
+
+### visualizing ADT split by cluster and grouped by sample type ---- Vln Plot
+pdf(paste(dir, "VlnPlot_pSTA5_adt_", date, ".pdf",sep=""), width = 10, height = 6)
+p6 <- VlnPlot(TotalSeqCohortm, features = c("adt_anti-STAT5"), split.by = "predicted.predicted_cluster")
+print(p6)
+dev.off()
+
+divout <- paste(dir,"Data_Sample+ClusterSplit-for-VlnPlot_",date,".csv",sep="") 
+write.csv(p6[[1]]$data, file=divout)
+
+### visualizing ADT split by cluster and grouped by sample type ---- Dot Plot
+pdf(paste(dir, "DotPlot_pSTA5_adt_", date, ".pdf",sep=""), width = 10, height = 6)
+p7 <- DotPlot(TotalSeqCohortm, features = c("adt_anti-STAT5"), split.by = "predicted.predicted_cluster", cols='RdBu')
+print(p7)
+dev.off()
+
+divout2 <- paste(dir,"Data_Sample+ClusterSplit-for-DotPlot_",date,".csv",sep="") 
+write.csv(p7$data, file=divout2)
 
 
 ##<--------------------------------------------------------
