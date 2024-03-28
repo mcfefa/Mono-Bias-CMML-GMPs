@@ -22,6 +22,7 @@ libraryPath <- "/home/ferrallm/Mono-Bias-CMML-GMPs/lib2"
 library('ggplot2', lib.loc=libraryPath)
 library('Seurat', lib.loc=libraryPath)
 library('patchwork', lib.loc=libraryPath)
+library('forcats', lib.loc=libraryPath)
 library('tidyverse', lib.loc=libraryPath)
 library('data.table', lib.loc=libraryPath)
 
@@ -32,7 +33,7 @@ library('data.table', lib.loc=libraryPath)
 
 ## output strings and directories
 dir <- "/blue/ferrallm/00_data/single-cell/CMML/totalseq-results/pSTAT5/pSTAT5-TotalSeq-Pilot-"
-date <- "2024-02-13"
+date <- "2024-03-28"
 
 
 ##################################################################
