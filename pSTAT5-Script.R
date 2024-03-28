@@ -555,5 +555,37 @@ pp <- p1 | p2 | p3
 print(pp)
 dev.off()
 
+## ADT only
+pdf(paste(dir, "FeaturePlot_pSTA5_adt_", date, ".pdf",sep=""), width = 6, height = 6)
+p3 <- FeaturePlot(TotalSeqCohortm, features = c("adt_anti-STAT5"), reduction = 'ref.umap')
+print(p3)
+dev.off()
+
+DefaultAssay(TotalSeqCohortm) <- "ADT"
+
+### visualizing ADT based on sample -- DotPlot
+pdf(paste(dir, "DotPlot_pSTA5_adt_bySample_", date, ".pdf",sep=""), width = 6, height = 6)
+p4 <- DotPlot(TotalSeqCohortm, features = c("adt_anti-STAT5")) #, group.by = TotalSeqCohortm$predicted.predicted_cluster)
+print(p4)
+dev.off()
+
+### visualizing ADT based on sample -- VlnPlot
+pdf(paste(dir, "VlnPlot_pSTA5_adt_", date, ".pdf",sep=""), width = 6, height = 6)
+p5 <- VlnPlot(TotalSeqCohortm, features = c("adt_anti-STAT5"))
+print(p5)
+dev.off()
+
+### visualizing ADT based on predicted cluster --- DotPlot
+pdf(paste(dir, "DotPlot_pSTA5_adt_byBCDcluster_", date, ".pdf",sep=""), width = 6, height = 6)
+p4 <- DotPlot(TotalSeqCohortm, features = c("adt_anti-STAT5"), group.by = "predicted.predicted_cluster")
+print(p4)
+dev.off()
+
+### visualizing ADT based on predicted cluster --- VlnPlot
+pdf(paste(dir, "VlnPlot_pSTA5_adt_byBCDcluster_", date, ".pdf",sep=""), width = 6, height = 6)
+p4 <- VlnPlot(TotalSeqCohortm, features = c("adt_anti-STAT5"), group.by = "predicted.predicted_cluster")
+print(p4)
+dev.off()
+
 
 ##<--------------------------------------------------------
