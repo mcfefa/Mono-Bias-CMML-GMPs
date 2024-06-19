@@ -38,7 +38,31 @@ BiocManger::install("GSVA")
 library(GSVA)
 ## bioconductor.org/packages/devel/bioc/vignettes/GSVA/inst/doc/GSVA.html
 
+setwd("/blue/ferrallm/00_data/RNAseq/Moffitt-CICPT_4448_Padron_RNAseq-TRE/CITESeq_BulkRNASeq_Results_05312024")
 
+## read in genelists
+glfile <- "/blue/ferrallm/00_data/RNAseq/Moffitt-CICPT_4448_Padron_RNAseq-TRE/Clus2+HSC-GeneSignatures.csv"
+genelists <- as.list(read.csv(glfile,sep=","))
 
+## run GSVA
+clus2_es <- gsva(bulkcts, genelists)
 
+library(RColorBrewer)
 
+pdf(file="/blue/ferrallm/00_data/RNAseq/Moffitt-CICPT_4448_Padron_RNAseq-TRE/Clus2_GSVA-enrichment-score-hm_2024-06-19.pdf", width=10, height=10)
+heatmap(clus2_es, 
+        margins=c(15,15))
+dev.off()
+
+## restrict to Clus2, HSC, GMP, MEP
+genelists2 <- genelists
+genelists2[5] <- NULL # removed Wu ProB
+genelists2[5] <- NULL # removed Wu ETP
+
+## run GSVA
+clus2_es2 <- gsva(bulkcts, genelists2)
+
+pdf(file="/blue/ferrallm/00_data/RNAseq/Moffitt-CICPT_4448_Padron_RNAseq-TRE/Clus2_GSVA-enrichment-score-HSC-GMP-MEP-hm_2024-06-19.pdf", width=10, height=10)
+heatmap(clus2_es2, 
+        margins=c(15,15))
+dev.off()
