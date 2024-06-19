@@ -14,3 +14,8 @@ library(tidyverse)
 library(tximport)
 
 ## code
+datadir <- "/blue/ferrallm/00_data/Moffitt-CICPT_4448_Padron_RNAseq-TRE/CITESeq_BulkRNASeq_Results_05312024/Salmon_Amy_CITESeq_BulkRNAseq/Filtered/"
+
+file <- paste(datadir,"Salmon_TPM_Filtered_GeneID_Data_without_Zeros.csv",sep="")
+bulkdata <- tximport(file, type="salmon", countsFromAbundance="scaledTPM", geneIDCol="GeneID")
+## still troubleshooting reading in the file; waiting for more info from Surendra on scripts used to run salmon
