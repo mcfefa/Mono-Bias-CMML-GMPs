@@ -122,7 +122,7 @@ heatmap(clus2_esOatt2,
         margins=c(15,15))
 dev.off()
 
-write.csv(clus2_esO, "/blue/ferrallm/00_data/RNAseq/Moffitt-CICPT_4448_Padron_RNAseq-TRE/Clus2_GSVA-enrichment-score-hm-scores-Optclus2v0_2025-01-30.csv")
+write.csv(clus2_esOatt2, "/blue/ferrallm/00_data/RNAseq/Moffitt-CICPT_4448_Padron_RNAseq-TRE/Clus2_GSVA-enrichment-score-hm-scores-Optclus2v0_2025-01-30.csv")
 
 
 
